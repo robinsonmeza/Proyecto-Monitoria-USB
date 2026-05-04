@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard Monitor — MonitorHub USB{% endblock %}
+
+{% block nav_tabs %}
+<li class="nav-item">
+    <a class="nav-link active" href="{% url 'usuarios:dashboard' %}">
+        <i class="bi bi-house-fill me-1"></i> Inicio
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="#">
+        <i class="bi bi-calendar3 me-1"></i> Mi Agenda
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'solicitudes:lista' %}">
+        <i class="bi bi-file-earmark-text me-1"></i> Solicitudes
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="#">
+        <i class="bi bi-people me-1"></i> Mis Estudiantes
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'mensajes:bandeja' %}">
+        <i class="bi bi-chat-dots me-1"></i> Mensajes
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="#">
+        <i class="bi bi-person-circle me-1"></i> Mi Perfil
+    </a>
+</li>
+{% endblock %}
+
+{% block sidebar_links %}
+<a href="{% url 'usuarios:dashboard' %}" class="nav-link active">
+    <i class="bi bi-house"></i> Inicio
+</a>
+<a href="{% url 'solicitudes:lista' %}" class="nav-link">
+    <i class="bi bi-file-earmark-check"></i> Solicitudes
+</a>
+<a href="{% url 'mensajes:bandeja' %}" class="nav-link">
+    <i class="bi bi-inbox"></i> Mensajes
+</a>
+<a href="{% url 'calificaciones:mis_calificaciones' %}" class="nav-link">
+    <i class="bi bi-star-half"></i> Calificaciones
+</a>
+<hr class="my-2">
+<a href="{% url 'usuarios:logout' %}" class="nav-link text-danger">
+    <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+</a>
+{% endblock %}
+
+{% block content %}
+
+{% if perfil_monitor %}
+<!-- ── Stats row ───────────────────────────────────────────────────── -->
+<div class="row g-3 mb-3">
+    <div class="col-md-3">
+        <div class="content-card text-center py-3">
+            <div style="font-size:1.8rem;color:var(--usb-green);">
+                <i class="bi bi-calendar-check-fill"></i>
+            </div>
+            <div class="fw-bold fs-4">{{ perfil_monitor.total_sesiones }}</div>
+            <div class="text-muted" style="font-size:.8rem;">Total Sesiones</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="content-card text-center py-3">
+            <div style="font-size:1.8rem;color:#f7941d;">
+                <i class="bi bi-star-fill"></i>
+            </div>
+            <div class="fw-bold fs-4">{{ perfil_monitor.promedio_estrellas|floatformat:1 }}</div>
+            <div class="text-muted" style="font-size:.8rem;">Promedio Estrellas</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="content-card text-center py-3">
+            <div style="font-size:1.8rem;color:var(--usb-teal);">
+                <i class="bi bi-graph-up"></i>
+            </div>
+            <div class="fw-bold fs-4">{{ perfil_monitor.promedio_hake|floatformat:2 }}</div>
+            <div class="text-muted" style="font-size:.8rem;">Promedio Hake</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="content-card text-center py-3">
+            <div style="font-size:1.8rem;color:#6f42c1;">
+                <i class="bi bi-trophy-fill"></i>
+            </div>
+            <div class="fw-bold fs-4">{{ perfil_monitor.calcular_ranking|floatformat:2 }}</div>
+            <div class="text-muted" style="font-size:.8rem;">Mi Ranking</div>
+        </div>
+    </div>
+</div>
+
+<!-- ── Solicitudes Pendientes ──────────────────────────────────────── -->
+<div class="content-card mb-3">
+    <div class="content-card-header">
+        <i class="bi bi-hourglass-split me-1"></i>
+        Solicitudes Pendientes
+        {% if solicitudes_pendientes %}
+        <span class="badge bg-warning text-dark ms-2">{{ solicitudes_pendientes.count }}</span>
+        {% endif %}
+    </div>
+    <div class="content-card-body p-0">
+        {% if solicitudes_pendientes %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Estudiante</th>
+                        <th>Materia</th>
+                        <th>Nota Inicial</th>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sol in solicitudes_pendientes %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="avatar-circle" style="width:32px;height:32px;font-size:.75rem;">
+                                    {{ sol.estudiante.usuario.first_name|first|upper }}{{ sol.estudiante.usuario.last_name|first|upper }}
+                                </div>
+                                {{ sol.estudiante.usuario.nombre_completo }}
+                            </div>
+                        </td>
+                        <td><span class="badge badge-materia">{{ sol.materia.nombre }}</span></td>
+                        <td>{{ sol.nota_inicial|floatformat:1 }}</td>
+                        <td>{{ sol.fecha_creacion|date:"d/m/Y" }}</td>
+                        <td>
+                            <a href="{% url 'mensajes:bandeja' %}?solicitud={{ sol.pk }}"
+                               class="btn btn-sm btn-outline-success">
+                                <i class="bi bi-chat-dots"></i> Responder
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-4 text-muted">
+            <i class="bi bi-inbox" style="font-size:2rem;"></i>
+            <p class="mt-2 mb-0">No tienes solicitudes pendientes.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- ── Mi Disponibilidad ───────────────────────────────────────────── -->
+<div class="content-card">
+    <div class="content-card-header">
+        <i class="bi bi-clock-fill me-1"></i> Mi Disponibilidad
+    </div>
+    <div class="content-card-body p-0">
+        {% if disponibilidades %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Día</th>
+                        <th>Hora Inicio</th>
+                        <th>Hora Fin</th>
+                        <th>Modalidad</th>
+                        <th>Ubicación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for disp in disponibilidades %}
+                    <tr>
+                        <td class="fw-semibold">{{ disp.get_dia_semana_display }}</td>
+                        <td>{{ disp.hora_inicio|time:"H:i" }}</td>
+                        <td>{{ disp.hora_fin|time:"H:i" }}</td>
+                        <td>
+                            <span class="badge {% if disp.modalidad == 'PRESENCIAL' %}bg-success{% else %}bg-info text-dark{% endif %}">
+                                {{ disp.get_modalidad_display }}
+                            </span>
+                        </td>
+                        <td>{{ disp.ubicacion|default:"—" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-4 text-muted">
+            <i class="bi bi-calendar-x" style="font-size:2rem;"></i>
+            <p class="mt-2 mb-0">No has configurado disponibilidad.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% else %}
+<div class="alert alert-warning">
+    <i class="bi bi-exclamation-triangle-fill me-1"></i>
+    No se encontró perfil de monitor. Contacta al administrador.
+</div>
+{% endif %}
+
+{% endblock %}

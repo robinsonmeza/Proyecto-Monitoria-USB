@@ -1,0 +1,261 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ monitor.usuario.nombre_completo }} — MonitorHub USB{% endblock %}
+
+{% block nav_tabs %}
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'usuarios:dashboard' %}">
+        <i class="bi bi-house-fill me-1"></i> Inicio
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link active" href="{% url 'monitores:lista' %}">
+        <i class="bi bi-search me-1"></i> Buscar Monitoria
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'solicitudes:lista' %}">
+        <i class="bi bi-file-earmark-text me-1"></i> Mis Monitorias
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'mensajes:bandeja' %}">
+        <i class="bi bi-chat-dots me-1"></i> Mensajes
+    </a>
+</li>
+{% endblock %}
+
+{% block sidebar_links %}
+<a href="{% url 'usuarios:dashboard' %}" class="nav-link">
+    <i class="bi bi-house"></i> Inicio
+</a>
+<a href="{% url 'monitores:lista' %}" class="nav-link active">
+    <i class="bi bi-search"></i> Buscar Monitoria
+</a>
+<a href="{% url 'solicitudes:lista' %}" class="nav-link">
+    <i class="bi bi-file-earmark-check"></i> Mis Solicitudes
+</a>
+<a href="{% url 'mensajes:bandeja' %}" class="nav-link">
+    <i class="bi bi-inbox"></i> Mensajes
+</a>
+<hr class="my-2">
+<a href="{% url 'usuarios:logout' %}" class="nav-link text-danger">
+    <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+</a>
+{% endblock %}
+
+{% block content %}
+
+<div class="row g-3">
+    <!-- ── Left: Profile ───────────────────────────────────────────── -->
+    <div class="col-md-8">
+        <!-- Profile card -->
+        <div class="content-card mb-3">
+            <div class="content-card-header">
+                <i class="bi bi-person-badge-fill me-1"></i> Perfil del Monitor
+            </div>
+            <div class="content-card-body">
+                <div class="d-flex gap-4 align-items-start">
+                    <div class="text-center" style="min-width:100px;">
+                        <div class="monitor-avatar mx-auto" style="width:72px;height:72px;font-size:1.5rem;">
+                            {{ monitor.usuario.first_name|first|upper }}{{ monitor.usuario.last_name|first|upper }}
+                        </div>
+                        <!-- Stars -->
+                        <div class="stars-display mt-2">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= monitor.promedio_estrellas %}
+                                <i class="bi bi-star-fill"></i>
+                                {% else %}
+                                <i class="bi bi-star empty"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <small class="text-muted">{{ monitor.promedio_estrellas|floatformat:1 }} / 5</small>
+                    </div>
+                    <div class="flex-fill">
+                        <h5 class="fw-bold mb-1" style="color:var(--usb-green);">
+                            {{ monitor.usuario.nombre_completo }}
+                        </h5>
+                        <p class="text-muted mb-2" style="font-size:.85rem;">
+                            <i class="bi bi-envelope me-1"></i>{{ monitor.usuario.email }}
+                        </p>
+                        <div class="row g-2 mb-2">
+                            <div class="col-4">
+                                <div class="border rounded p-2 text-center">
+                                    <div style="font-size:.7rem;color:#888;">Sesiones</div>
+                                    <div class="fw-bold">{{ monitor.total_sesiones }}</div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="border rounded p-2 text-center">
+                                    <div style="font-size:.7rem;color:#888;">Hake</div>
+                                    <div class="fw-bold">{{ monitor.promedio_hake|floatformat:2 }}</div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="border rounded p-2 text-center">
+                                    <div style="font-size:.7rem;color:#888;">Ranking</div>
+                                    <div class="fw-bold">{{ monitor.calcular_ranking|floatformat:2 }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        {% if monitor.biografia %}
+                        <p class="mb-0" style="font-size:.86rem;">{{ monitor.biografia }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subjects -->
+        <div class="content-card mb-3">
+            <div class="content-card-header">
+                <i class="bi bi-book-fill me-1"></i> Materias que Imparte
+            </div>
+            <div class="content-card-body">
+                {% for mat in materias_monitor %}
+                <div class="d-flex align-items-center justify-content-between border rounded p-2 mb-2">
+                    <div>
+                        <span class="badge badge-materia me-2">{{ mat.codigo }}</span>
+                        <strong>{{ mat.nombre }}</strong>
+                    </div>
+                    <small class="text-muted">{{ mat.departamento }}</small>
+                </div>
+                {% empty %}
+                <p class="text-muted mb-0">Sin materias asignadas.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Availability -->
+        <div class="content-card">
+            <div class="content-card-header">
+                <i class="bi bi-clock-fill me-1"></i> Horarios Disponibles
+            </div>
+            <div class="content-card-body p-0">
+                {% if disponibilidades %}
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Día</th>
+                                <th>Hora Inicio</th>
+                                <th>Hora Fin</th>
+                                <th>Modalidad</th>
+                                <th>Ubicación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for disp in disponibilidades %}
+                            <tr>
+                                <td class="fw-semibold">{{ disp.get_dia_semana_display }}</td>
+                                <td>{{ disp.hora_inicio|time:"H:i" }}</td>
+                                <td>{{ disp.hora_fin|time:"H:i" }}</td>
+                                <td>
+                                    <span class="badge {% if disp.modalidad == 'PRESENCIAL' %}bg-success{% else %}bg-info text-dark{% endif %}">
+                                        {{ disp.get_modalidad_display }}
+                                    </span>
+                                </td>
+                                <td>{{ disp.ubicacion|default:"—" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4 text-muted">
+                    <i class="bi bi-calendar-x" style="font-size:2rem;"></i>
+                    <p class="mt-2 mb-0">Sin horarios configurados.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Right: Request form ─────────────────────────────────────── -->
+    <div class="col-md-4">
+        <div class="content-card" style="position:sticky;top:1rem;">
+            <div class="content-card-header">
+                <i class="bi bi-plus-circle-fill me-1"></i> Solicitar Monitoria
+            </div>
+            <div class="content-card-body">
+                <form method="post" action="{% url 'solicitudes:nueva' monitor.pk %}">
+                    {% csrf_token %}
+                    <!-- Materia -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" style="font-size:.85rem;">
+                            <i class="bi bi-book me-1"></i> Materia
+                        </label>
+                        <select name="materia" class="form-select form-select-sm" required>
+                            <option value="">Selecciona una materia…</option>
+                            {% for mat in materias_monitor %}
+                            <option value="{{ mat.pk }}">{{ mat.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <!-- Docente -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" style="font-size:.85rem;">
+                            <i class="bi bi-person-video3 me-1"></i> Docente
+                        </label>
+                        <select name="docente" class="form-select form-select-sm" required>
+                            <option value="">Selecciona un docente…</option>
+                            {% for doc in docentes %}
+                            <option value="{{ doc.pk }}">{{ doc.usuario.nombre_completo }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <!-- Nota inicial -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" style="font-size:.85rem;">
+                            <i class="bi bi-123 me-1"></i> Nota Inicial
+                        </label>
+                        <input type="number"
+                               name="nota_inicial"
+                               class="form-control form-control-sm"
+                               min="0" max="5" step="0.1"
+                               placeholder="0.0 – 5.0"
+                               required>
+                        <div class="form-text" style="font-size:.72rem;">Tu nota antes de comenzar la monitoria.</div>
+                    </div>
+                    <!-- Nota corte -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" style="font-size:.85rem;">
+                            <i class="bi bi-bar-chart me-1"></i> Nota Corte Actual
+                        </label>
+                        <input type="number"
+                               name="nota_corte_actual"
+                               class="form-control form-control-sm"
+                               min="0" max="5" step="0.1"
+                               placeholder="0.0 – 5.0"
+                               required>
+                    </div>
+                    <!-- Notas adicionales -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" style="font-size:.85rem;">
+                            <i class="bi bi-chat-text me-1"></i> Notas adicionales
+                            <span class="text-muted fw-normal">(opcional)</span>
+                        </label>
+                        <textarea name="notas"
+                                  class="form-control form-control-sm"
+                                  rows="3"
+                                  placeholder="Temas específicos, dudas, preferencias de horario…"></textarea>
+                    </div>
+                    <button type="submit"
+                            class="btn w-100"
+                            style="background:var(--usb-green);color:#fff;">
+                        <i class="bi bi-send-fill me-1"></i> Enviar Solicitud
+                    </button>
+                </form>
+                <hr>
+                <p class="text-muted mb-0" style="font-size:.75rem;">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Se notificará al monitor y al docente por correo institucional.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

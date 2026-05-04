@@ -1,0 +1,41 @@
+# ── Python ──────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ── Entorno virtual ──────────────────────────────────────────────────────────
+venv/
+env/
+.venv/
+
+# ── Django ───────────────────────────────────────────────────────────────────
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+staticfiles/
+media/
+
+# ── Variables de entorno (¡NUNCA subir al repo!) ─────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── IDEs y editores ──────────────────────────────────────────────────────────
+.vscode/
+.idea/
+.claude/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ── Migraciones generadas (mantener el código, omitir datos locales) ─────────
+# Las migraciones SÍ se suben — no ignorar

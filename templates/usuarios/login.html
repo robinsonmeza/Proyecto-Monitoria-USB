@@ -1,0 +1,218 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar sesión — MonitorHub USB</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --usb-green:  #006633;
+            --usb-orange: #F7941D;
+            --usb-teal:   #00AEAE;
+            --usb-footer: #1C1C1C;
+            --usb-bg:     #F0F0F0;
+        }
+        body {
+            background: var(--usb-bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        main { flex: 1; }
+        .login-card {
+            max-width: 480px;
+            margin: 2.5rem auto 0;
+            border: none;
+            border-radius: 6px;
+            box-shadow: 0 4px 20px rgba(0,0,0,.12);
+        }
+        .login-card-header {
+            background: var(--usb-green);
+            color: #fff;
+            text-align: center;
+            padding: 1.5rem 1rem;
+            border-radius: 6px 6px 0 0;
+        }
+        .login-card-header .logo-sub {
+            font-size: .8rem;
+            opacity: .85;
+            margin-top: .3rem;
+        }
+        /* Cápsula blanca que envuelve el logo */
+        .logo-wrapper {
+            background: #fff;
+            border-radius: 10px;
+            padding: .55rem 1.4rem;
+            display: inline-block;
+            margin-bottom: .55rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,.18);
+        }
+        .logo-img {
+            max-height: 62px;
+            max-width: 290px;
+            width: auto;
+            display: block;
+        }
+        /* Fallback si no hay imagen */
+        .logo-fallback {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 72px; height: 72px;
+            background: rgba(255,255,255,.2);
+            border-radius: 50%;
+            font-size: 1.7rem;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: .4rem;
+        }
+        .login-card-body { background: #fff; padding: 2rem; border-radius: 0 0 6px 6px; }
+        .btn-usb-green {
+            background: var(--usb-green);
+            color: #fff;
+            border: none;
+        }
+        .btn-usb-green:hover { background: #004d26; color: #fff; }
+        .accent-stripe-orange { height: 4px; background: var(--usb-orange); }
+        .accent-stripe-teal   { height: 4px; background: var(--usb-teal); }
+        footer {
+            background: var(--usb-footer);
+            color: #ccc;
+            padding: 1.5rem 0;
+            font-size: .8rem;
+        }
+        footer h6 { color: #fff; font-size: .82rem; font-weight: 700; margin-bottom: .5rem; }
+    </style>
+</head>
+<body>
+<main class="pb-5">
+    <div class="login-card">
+        <!-- Card header -->
+        <div class="login-card-header">
+            <div class="logo-wrapper" id="logo-wrapper">
+                <img src="{% static 'img/logo_usb_emblema.png' %}"
+                     alt="Universidad Simón Bolívar"
+                     class="logo-img"
+                     onerror="document.getElementById('logo-wrapper').style.display='none'; document.getElementById('logo-fb').style.display='inline-flex';">
+            </div>
+            <div class="logo-fallback" id="logo-fb" style="display:none;">USB</div>
+            <div class="logo-sub">Sistema de Monitorias Académicas</div>
+        </div>
+        <!-- Accent stripes -->
+        <div class="accent-stripe-orange"></div>
+        <div class="accent-stripe-teal"></div>
+        <!-- Card body -->
+        <div class="login-card-body">
+            <h5 class="text-center mb-3" style="color:#006633;">
+                <i class="bi bi-lock-fill me-1"></i> Iniciar sesión
+            </h5>
+
+            {% if form_error %}
+            <div class="alert alert-danger alert-dismissible fade show py-2" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                {{ form_error }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endif %}
+
+            <form method="post" action="{% url 'usuarios:login' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="email" class="form-label fw-semibold">
+                        <i class="bi bi-envelope me-1"></i> Usuario
+                    </label>
+                    <input type="email"
+                           class="form-control"
+                           id="email"
+                           name="email"
+                           placeholder="correo@unisimon.edu.co"
+                           autocomplete="email"
+                           required>
+                </div>
+                <div class="mb-4">
+                    <label for="password" class="form-label fw-semibold">
+                        <i class="bi bi-key me-1"></i> Contraseña
+                    </label>
+                    <div class="input-group">
+                        <input type="password"
+                               class="form-control"
+                               id="password"
+                               name="password"
+                               placeholder="••••••••"
+                               autocomplete="current-password"
+                               required>
+                        <button class="btn btn-outline-secondary"
+                                type="button"
+                                id="toggle-pw"
+                                title="Mostrar/ocultar contraseña">
+                            <i class="bi bi-eye" id="pw-icon"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="row g-2">
+                    <div class="col-7">
+                        <button type="submit" class="btn btn-usb-green w-100">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Iniciar sesión
+                        </button>
+                    </div>
+                    <div class="col-5">
+                        <button type="button"
+                                class="btn btn-outline-secondary w-100"
+                                disabled
+                                title="Próximamente en versión final">
+                            <i class="bi bi-microsoft me-1"></i> Microsoft
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <hr class="my-3">
+            <p class="text-center text-muted mb-0" style="font-size:.78rem;">
+                <i class="bi bi-shield-lock me-1"></i>
+                Acceso exclusivo para miembros de la comunidad USB
+            </p>
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h6><i class="bi bi-mortarboard-fill me-1"></i> PREGRADO</h6>
+                <p class="mb-1"><i class="bi bi-telephone me-1"></i> XXXXXXXXX</p>
+                <p class="mb-0"><i class="bi bi-envelope me-1"></i> R_MEZA@unisimon.edu.co</p>
+            </div>
+            <div class="col-md-4">
+                <h6><i class="bi bi-book-fill me-1"></i> POSGRADO</h6>
+                <p class="mb-1"><i class="bi bi-telephone me-1"></i> XXXXXXXXX</p>
+                <p class="mb-0"><i class="bi bi-envelope me-1"></i> R_MEZA@unisimon.edu.co</p>
+            </div>
+            <div class="col-md-4">
+                <h6><i class="bi bi-info-circle-fill me-1"></i> MONITORHUB</h6>
+                <p class="mb-1">Sistema de Información de Monitorias v.1, Proyecto Integrador </p>
+                <p class="mb-0">&copy; 2026 — Ingenieria de Software - Universidad Simón Bolívar</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.getElementById('toggle-pw').addEventListener('click', function(){
+    var inp = document.getElementById('password');
+    var ico = document.getElementById('pw-icon');
+    if(inp.type === 'password'){
+        inp.type = 'text';
+        ico.className = 'bi bi-eye-slash';
+    } else {
+        inp.type = 'password';
+        ico.className = 'bi bi-eye';
+    }
+});
+</script>
+</body>
+</html>

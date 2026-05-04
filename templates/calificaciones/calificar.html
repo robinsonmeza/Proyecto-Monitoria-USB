@@ -1,0 +1,264 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Calificar Monitoria — MonitorHub USB{% endblock %}
+
+{% block extra_css %}
+<style>
+    .star-rating { display: flex; gap: .3rem; flex-direction: row-reverse; justify-content: flex-end; }
+    .star-rating input[type="radio"] { display: none; }
+    .star-rating label {
+        font-size: 2rem;
+        color: #ccc;
+        cursor: pointer;
+        transition: color .15s;
+    }
+    .star-rating input[type="radio"]:checked ~ label,
+    .star-rating label:hover,
+    .star-rating label:hover ~ label {
+        color: #f7941d;
+    }
+    .hake-preview-bar { height: 14px; border-radius: 7px; }
+    .hake-level-alta     { background: #198754; }
+    .hake-level-media    { background: #0d6efd; }
+    .hake-level-baja     { background: #ffc107; }
+    .hake-level-retroceso { background: #dc3545; }
+</style>
+{% endblock %}
+
+{% block nav_tabs %}
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'usuarios:dashboard' %}">
+        <i class="bi bi-house-fill me-1"></i> Inicio
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'solicitudes:lista' %}">
+        <i class="bi bi-file-earmark-text me-1"></i> Mis Monitorias
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link active" href="{% url 'calificaciones:mis_calificaciones' %}">
+        <i class="bi bi-star me-1"></i> Calificaciones
+    </a>
+</li>
+{% endblock %}
+
+{% block sidebar_links %}
+<a href="{% url 'usuarios:dashboard' %}" class="nav-link">
+    <i class="bi bi-house"></i> Inicio
+</a>
+<a href="{% url 'solicitudes:lista' %}" class="nav-link">
+    <i class="bi bi-file-earmark-check"></i> Mis Solicitudes
+</a>
+<a href="{% url 'calificaciones:mis_calificaciones' %}" class="nav-link active">
+    <i class="bi bi-star-half"></i> Calificaciones
+</a>
+<hr class="my-2">
+<a href="{% url 'usuarios:logout' %}" class="nav-link text-danger">
+    <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+</a>
+{% endblock %}
+
+{% block content %}
+
+<!-- ── Monitor info card ────────────────────────────────────────────── -->
+<div class="content-card mb-3">
+    <div class="content-card-header">
+        <i class="bi bi-person-badge-fill me-1"></i> Información de la Monitoria
+    </div>
+    <div class="content-card-body">
+        <div class="d-flex align-items-center gap-3">
+            <div class="monitor-avatar" style="width:60px;height:60px;font-size:1.3rem;">
+                {{ monitor.usuario.first_name|first|upper }}{{ monitor.usuario.last_name|first|upper }}
+            </div>
+            <div>
+                <h5 class="mb-0 fw-bold" style="color:var(--usb-green);">
+                    {{ monitor.usuario.nombre_completo }}
+                </h5>
+                <div class="text-muted" style="font-size:.85rem;">
+                    <i class="bi bi-book me-1"></i> {{ solicitud.materia.nombre }}
+                    &nbsp;&bull;&nbsp;
+                    <i class="bi bi-calendar3 me-1"></i> {{ solicitud.fecha_creacion|date:"d/m/Y" }}
+                </div>
+                <div class="mt-1">
+                    <span class="badge badge-completado">
+                        <i class="bi bi-check-circle-fill me-1"></i> Completada
+                    </span>
+                    <span class="ms-2 text-muted" style="font-size:.8rem;">
+                        Nota inicial: <strong>{{ solicitud.nota_inicial|floatformat:1 }}</strong>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── Rating form ──────────────────────────────────────────────────── -->
+<div class="content-card">
+    <div class="content-card-header">
+        <i class="bi bi-star-fill me-1"></i> Calificar al Monitor
+    </div>
+    <div class="content-card-body">
+        <form method="post" action="{% url 'calificaciones:calificar' solicitud.pk %}">
+            {% csrf_token %}
+
+            <!-- Star rating -->
+            <div class="mb-4">
+                <label class="form-label fw-semibold">
+                    <i class="bi bi-star me-1"></i> Calificación en estrellas
+                </label>
+                <div class="star-rating" id="star-rating-widget">
+                    <input type="radio" name="estrellas" id="s5" value="5">
+                    <label for="s5" title="Excelente"><i class="bi bi-star-fill"></i></label>
+                    <input type="radio" name="estrellas" id="s4" value="4">
+                    <label for="s4" title="Muy bueno"><i class="bi bi-star-fill"></i></label>
+                    <input type="radio" name="estrellas" id="s3" value="3" checked>
+                    <label for="s3" title="Bueno"><i class="bi bi-star-fill"></i></label>
+                    <input type="radio" name="estrellas" id="s2" value="2">
+                    <label for="s2" title="Regular"><i class="bi bi-star-fill"></i></label>
+                    <input type="radio" name="estrellas" id="s1" value="1">
+                    <label for="s1" title="Deficiente"><i class="bi bi-star-fill"></i></label>
+                </div>
+                <div class="form-text" id="star-label">Bueno (3 estrellas)</div>
+            </div>
+
+            <!-- Nota final -->
+            <div class="mb-3">
+                <label for="nota_final" class="form-label fw-semibold">
+                    <i class="bi bi-123 me-1"></i> Nota Final
+                    <small class="text-muted fw-normal">(0.0 – 5.0)</small>
+                </label>
+                <input type="number"
+                       id="nota_final"
+                       name="nota_final"
+                       class="form-control"
+                       min="0" max="5" step="0.1"
+                       value="{{ solicitud.nota_corte_actual|floatformat:1 }}"
+                       required>
+                <div class="form-text">
+                    Nota inicial: <strong>{{ solicitud.nota_inicial|floatformat:1 }}</strong>
+                </div>
+            </div>
+
+            <!-- Live Hake preview -->
+            <div class="mb-4 p-3 border rounded bg-light">
+                <div class="fw-semibold mb-2" style="font-size:.9rem;">
+                    <i class="bi bi-graph-up-arrow me-1" style="color:var(--usb-green);"></i>
+                    Vista previa — Ganancia Normalizada de Hake (g)
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <div class="flex-fill">
+                        <div class="progress">
+                            <div id="hake-bar"
+                                 class="progress-bar hake-preview-bar"
+                                 style="width:0%;"
+                                 role="progressbar">
+                            </div>
+                        </div>
+                    </div>
+                    <div style="min-width:90px;text-align:right;">
+                        <span class="fw-bold fs-5" id="hake-value">—</span>
+                        <br>
+                        <span class="badge bg-secondary" id="hake-label">—</span>
+                    </div>
+                </div>
+                <small class="text-muted d-block mt-1" style="font-size:.72rem;">
+                    g = (nota_final − nota_inicial) / (5.0 − nota_inicial)
+                </small>
+            </div>
+
+            <!-- Comentario privado -->
+            <div class="mb-4">
+                <label for="comentario_privado" class="form-label fw-semibold">
+                    <i class="bi bi-chat-square-text me-1"></i> Comentario Privado
+                </label>
+                <textarea id="comentario_privado"
+                          name="comentario_privado"
+                          class="form-control"
+                          rows="4"
+                          placeholder="Describe tu experiencia, fortalezas y áreas de mejora del monitor…"></textarea>
+                <div class="form-text">
+                    <i class="bi bi-shield-lock me-1"></i>
+                    <em>Solo visible para el docente supervisor. No será mostrado al monitor.</em>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn px-4" style="background:var(--usb-green);color:#fff;">
+                    <i class="bi bi-save-fill me-1"></i> Guardar Calificación
+                </button>
+                <a href="{% url 'solicitudes:lista' %}" class="btn btn-outline-secondary">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+var NOTA_INICIAL = {{ solicitud.nota_inicial|floatformat:2 }};
+
+var starLabels = {
+    '1': 'Deficiente (1 estrella)',
+    '2': 'Regular (2 estrellas)',
+    '3': 'Bueno (3 estrellas)',
+    '4': 'Muy bueno (4 estrellas)',
+    '5': 'Excelente (5 estrellas)'
+};
+
+// Star label update
+document.querySelectorAll('input[name="estrellas"]').forEach(function(inp){
+    inp.addEventListener('change', function(){
+        document.getElementById('star-label').textContent = starLabels[this.value] || '';
+    });
+});
+
+// Hake live preview
+function calcularHake(notaFinal) {
+    var denominador = 5.0 - NOTA_INICIAL;
+    if (denominador <= 0) return 1.0;
+    return (notaFinal - NOTA_INICIAL) / denominador;
+}
+
+function actualizarHake() {
+    var notaFinal = parseFloat(document.getElementById('nota_final').value);
+    if (isNaN(notaFinal)) return;
+
+    var g = calcularHake(notaFinal);
+    var bar = document.getElementById('hake-bar');
+    var valueEl = document.getElementById('hake-value');
+    var labelEl = document.getElementById('hake-label');
+
+    var pct = Math.max(0, Math.min(100, g * 100));
+    bar.style.width = pct + '%';
+    valueEl.textContent = g.toFixed(3);
+
+    bar.className = 'progress-bar hake-preview-bar';
+    if (g >= 0.7) {
+        bar.classList.add('hake-level-alta');
+        labelEl.textContent = 'Ganancia Alta';
+        labelEl.className = 'badge bg-success';
+    } else if (g >= 0.3) {
+        bar.classList.add('hake-level-media');
+        labelEl.textContent = 'Ganancia Media';
+        labelEl.className = 'badge bg-primary';
+    } else if (g >= 0) {
+        bar.classList.add('hake-level-baja');
+        labelEl.textContent = 'Ganancia Baja';
+        labelEl.className = 'badge bg-warning text-dark';
+    } else {
+        bar.classList.add('hake-level-retroceso');
+        labelEl.textContent = 'Retroceso';
+        labelEl.className = 'badge bg-danger';
+    }
+}
+
+document.getElementById('nota_final').addEventListener('input', actualizarHake);
+// Initial calculation
+actualizarHake();
+</script>
+{% endblock %}

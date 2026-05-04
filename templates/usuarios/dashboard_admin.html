@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard Administrador — MonitorHub USB{% endblock %}
+
+{% block nav_tabs %}
+<li class="nav-item">
+    <a class="nav-link active" href="{% url 'usuarios:dashboard' %}">
+        <i class="bi bi-house-fill me-1"></i> Inicio
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="#">
+        <i class="bi bi-people me-1"></i> Usuarios
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'monitores:lista' %}">
+        <i class="bi bi-person-badge me-1"></i> Monitores
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="#">
+        <i class="bi bi-book me-1"></i> Materias
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'solicitudes:lista' %}">
+        <i class="bi bi-file-earmark-text me-1"></i> Solicitudes
+    </a>
+</li>
+{% endblock %}
+
+{% block sidebar_links %}
+<a href="{% url 'usuarios:dashboard' %}" class="nav-link active">
+    <i class="bi bi-speedometer2"></i> Panel Admin
+</a>
+<a href="#" class="nav-link">
+    <i class="bi bi-people"></i> Gestionar Usuarios
+</a>
+<a href="{% url 'monitores:lista' %}" class="nav-link">
+    <i class="bi bi-person-badge"></i> Gestionar Monitores
+</a>
+<a href="#" class="nav-link">
+    <i class="bi bi-book"></i> Gestionar Materias
+</a>
+<a href="{% url 'solicitudes:lista' %}" class="nav-link">
+    <i class="bi bi-file-earmark-text"></i> Solicitudes
+</a>
+<hr class="my-2">
+<a href="/admin/" class="nav-link">
+    <i class="bi bi-gear"></i> Panel Django
+</a>
+<a href="{% url 'usuarios:logout' %}" class="nav-link text-danger">
+    <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+</a>
+{% endblock %}
+
+{% block content %}
+
+<!-- ── Stats row ───────────────────────────────────────────────────── -->
+<div class="row g-3 mb-3">
+    <div class="col-md-3">
+        <div class="content-card text-center py-3">
+            <div style="font-size:1.8rem;color:var(--usb-green);">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <div class="fw-bold fs-4">{{ stats.estudiantes|default:"0" }}</div>
+            <div class="text-muted" style="font-size:.8rem;">Total Estudiantes</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="content-card text-center py-3">
+            <div style="font-size:1.8rem;color:#198754;">
+                <i class="bi bi-person-badge-fill"></i>
+            </div>
+            <div class="fw-bold fs-4">{{ stats.monitores_activos|default:"0" }}</div>
+            <div class="text-muted" style="font-size:.8rem;">Monitores Activos</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="content-card text-center py-3">
+            <div style="font-size:1.8rem;color:var(--usb-orange);">
+                <i class="bi bi-file-earmark-check-fill"></i>
+            </div>
+            <div class="fw-bold fs-4">{{ stats.solicitudes_activas|default:"0" }}</div>
+            <div class="text-muted" style="font-size:.8rem;">Solicitudes Activas</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="content-card text-center py-3">
+            <div style="font-size:1.8rem;color:var(--usb-teal);">
+                <i class="bi bi-book-fill"></i>
+            </div>
+            <div class="fw-bold fs-4">{{ stats.materias|default:"0" }}</div>
+            <div class="text-muted" style="font-size:.8rem;">Materias</div>
+        </div>
+    </div>
+</div>
+
+<!-- ── Monitores Pendientes de Aprobación ─────────────────────────── -->
+<div class="content-card">
+    <div class="content-card-header d-flex justify-content-between align-items-center">
+        <span>
+            <i class="bi bi-hourglass-split me-1"></i>
+            Monitores Pendientes de Aprobación
+        </span>
+        {% if monitores_pendientes %}
+        <span class="badge bg-warning text-dark">{{ monitores_pendientes.count }}</span>
+        {% endif %}
+    </div>
+    <div class="content-card-body p-0">
+        {% if monitores_pendientes %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Monitor</th>
+                        <th>Correo</th>
+                        <th>Materias</th>
+                        <th>Fecha Solicitud</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for monitor in monitores_pendientes %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="avatar-circle" style="width:34px;height:34px;font-size:.8rem;">
+                                    {{ monitor.usuario.first_name|first|upper }}{{ monitor.usuario.last_name|first|upper }}
+                                </div>
+                                <div>
+                                    <div class="fw-semibold">{{ monitor.usuario.nombre_completo }}</div>
+                                    <small class="text-muted">{{ monitor.usuario.get_rol_display }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ monitor.usuario.email }}</td>
+                        <td>
+                            {% for mat in monitor.materias.all %}
+                            <span class="badge badge-materia me-1">{{ mat.nombre }}</span>
+                            {% empty %}
+                            <span class="text-muted">—</span>
+                            {% endfor %}
+                        </td>
+                        <td>{{ monitor.usuario.fecha_creacion|date:"d/m/Y" }}</td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <!-- Aprobar -->
+                                <form method="post" action="{% url 'monitores:aprobar' monitor.pk %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="accion" value="aprobar">
+                                    <button type="submit"
+                                            class="btn btn-sm btn-success"
+                                            onclick="return confirm('¿Aprobar a {{ monitor.usuario.nombre_completo }} como monitor?')">
+                                        <i class="bi bi-check-lg"></i> Aprobar
+                                    </button>
+                                </form>
+                                <!-- Rechazar -->
+                                <form method="post" action="{% url 'monitores:aprobar' monitor.pk %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="accion" value="rechazar">
+                                    <button type="submit"
+                                            class="btn btn-sm btn-danger"
+                                            onclick="return confirm('¿Rechazar la solicitud de {{ monitor.usuario.nombre_completo }}?')">
+                                        <i class="bi bi-x-lg"></i> Rechazar
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-4 text-muted">
+            <i class="bi bi-check-circle" style="font-size:2rem;color:var(--usb-green);"></i>
+            <p class="mt-2 mb-0">No hay monitores pendientes de aprobación.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

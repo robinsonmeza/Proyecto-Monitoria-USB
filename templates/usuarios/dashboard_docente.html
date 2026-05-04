@@ -1,0 +1,369 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard Docente — MonitorHub USB{% endblock %}
+
+{% block nav_tabs %}
+<li class="nav-item">
+    <a class="nav-link active" href="{% url 'usuarios:dashboard' %}">
+        <i class="bi bi-house-fill me-1"></i> Inicio
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'solicitudes:lista' %}">
+        <i class="bi bi-file-earmark-text me-1"></i> Solicitudes
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="#">
+        <i class="bi bi-people me-1"></i> Mis Monitores
+    </a>
+</li>
+{% endblock %}
+
+{% block sidebar_links %}
+<a href="{% url 'usuarios:dashboard' %}" class="nav-link active">
+    <i class="bi bi-house"></i> Inicio
+</a>
+<a href="{% url 'solicitudes:lista' %}" class="nav-link">
+    <i class="bi bi-file-earmark-text"></i> Solicitudes
+</a>
+<a href="#disponibilidad" class="nav-link">
+    <i class="bi bi-calendar-week"></i> Mi Disponibilidad
+</a>
+<a href="#" class="nav-link">
+    <i class="bi bi-people"></i> Mis Monitores
+</a>
+<hr class="my-2">
+<a href="{% url 'usuarios:logout' %}" class="nav-link text-danger">
+    <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+</a>
+{% endblock %}
+
+{% block content %}
+
+{% if perfil_docente %}
+
+<!-- ── Datos Docente ────────────────────────────────────────────────── -->
+<div class="content-card mb-3">
+    <div class="content-card-header">
+        <i class="bi bi-person-badge-fill me-1"></i> Datos Docente
+    </div>
+    <div class="content-card-body">
+        <div class="row g-2">
+            <div class="col-md-4">
+                <div class="border rounded p-2">
+                    <div class="text-muted" style="font-size:.73rem;">
+                        <i class="bi bi-person text-success me-1"></i> Nombre
+                    </div>
+                    <div class="fw-semibold">{{ request.user.nombre_completo }}</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="border rounded p-2">
+                    <div class="text-muted" style="font-size:.73rem;">
+                        <i class="bi bi-building text-success me-1"></i> Departamento
+                    </div>
+                    <div class="fw-semibold">{{ perfil_docente.departamento }}</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="border rounded p-2">
+                    <div class="text-muted" style="font-size:.73rem;">
+                        <i class="bi bi-envelope text-success me-1"></i> Correo
+                    </div>
+                    <div class="fw-semibold">{{ request.user.email }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── Tutorías Pendientes ───────────────────────────────────────────── -->
+{% if tutorias_pendientes %}
+<div class="content-card mb-3">
+    <div class="content-card-header d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-hourglass-split me-1"></i> Solicitudes de Tutoría Pendientes</span>
+        <span class="badge bg-warning text-dark">{{ tutorias_pendientes.count }}</span>
+    </div>
+    <div class="content-card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Estudiante</th>
+                        <th>Materia</th>
+                        <th>Nota Inicial</th>
+                        <th>Nota Corte</th>
+                        <th>Fecha</th>
+                        <th>Notas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tut in tutorias_pendientes %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="avatar-circle" style="width:32px;height:32px;font-size:.75rem;">
+                                    {{ tut.estudiante.usuario.first_name|first|upper }}{{ tut.estudiante.usuario.last_name|first|upper }}
+                                </div>
+                                <div>
+                                    <div class="fw-semibold" style="font-size:.85rem;">{{ tut.estudiante.usuario.nombre_completo }}</div>
+                                    <small class="text-muted">{{ tut.estudiante.usuario.email }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td><span class="badge badge-materia">{{ tut.materia.nombre }}</span></td>
+                        <td>{{ tut.nota_inicial|floatformat:1 }}</td>
+                        <td>{{ tut.nota_corte_actual|floatformat:1 }}</td>
+                        <td style="font-size:.82rem;">{{ tut.fecha_creacion|date:"d/m/Y" }}</td>
+                        <td style="font-size:.8rem;max-width:180px;">
+                            {{ tut.notas|truncatechars:60|default:"—" }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- ── Gestión de Disponibilidad para Tutorías ──────────────────────── -->
+<div class="content-card mb-3" id="disponibilidad">
+    <div class="content-card-header d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-calendar-week-fill me-1"></i> Mi Disponibilidad para Tutorías</span>
+        <button class="btn btn-sm btn-light" type="button"
+                data-bs-toggle="collapse" data-bs-target="#form-disponibilidad">
+            <i class="bi bi-plus-circle me-1"></i> Agregar horario
+        </button>
+    </div>
+
+    <!-- Formulario colapsable -->
+    <div class="collapse" id="form-disponibilidad">
+        <div class="content-card-body border-bottom" style="background:#f8fdf9;">
+            <form method="post" action="{% url 'sesiones:agregar_disponibilidad' %}" class="row g-2 align-items-end">
+                {% csrf_token %}
+                <!-- Día -->
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold mb-1" style="font-size:.8rem;">
+                        <i class="bi bi-calendar3 me-1"></i>Día
+                    </label>
+                    <select name="dia_semana" class="form-select form-select-sm" required>
+                        <option value="">Día…</option>
+                        <option value="LUNES">Lunes</option>
+                        <option value="MARTES">Martes</option>
+                        <option value="MIERCOLES">Miércoles</option>
+                        <option value="JUEVES">Jueves</option>
+                        <option value="VIERNES">Viernes</option>
+                        <option value="SABADO">Sábado</option>
+                    </select>
+                </div>
+                <!-- Hora inicio -->
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold mb-1" style="font-size:.8rem;">
+                        <i class="bi bi-clock me-1"></i>Inicio
+                    </label>
+                    <input type="time" name="hora_inicio" class="form-control form-control-sm" required>
+                </div>
+                <!-- Hora fin -->
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold mb-1" style="font-size:.8rem;">
+                        <i class="bi bi-clock-fill me-1"></i>Fin
+                    </label>
+                    <input type="time" name="hora_fin" class="form-control form-control-sm" required>
+                </div>
+                <!-- Modalidad -->
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold mb-1" style="font-size:.8rem;">
+                        <i class="bi bi-laptop me-1"></i>Modalidad
+                    </label>
+                    <select name="modalidad" class="form-select form-select-sm" required>
+                        <option value="PRESENCIAL">Presencial</option>
+                        <option value="VIRTUAL">Virtual</option>
+                        <option value="AMBAS">Ambas</option>
+                    </select>
+                </div>
+                <!-- Materia (opcional) -->
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold mb-1" style="font-size:.8rem;">
+                        <i class="bi bi-book me-1"></i>Materia
+                        <span class="text-muted fw-normal">(opcional)</span>
+                    </label>
+                    <select name="materia" class="form-select form-select-sm">
+                        <option value="">Todas</option>
+                        {% for mat in materias_docente %}
+                        <option value="{{ mat.pk }}">{{ mat.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <!-- Ubicación -->
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold mb-1" style="font-size:.8rem;">
+                        <i class="bi bi-geo-alt me-1"></i>Ubicación / Enlace
+                    </label>
+                    <input type="text" name="ubicacion"
+                           class="form-control form-control-sm"
+                           placeholder="Ej: Bloque 7 - 210">
+                </div>
+                <!-- Botón -->
+                <div class="col-12 d-flex justify-content-end gap-2 mt-1">
+                    <button type="button" class="btn btn-sm btn-outline-secondary"
+                            data-bs-toggle="collapse" data-bs-target="#form-disponibilidad">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-sm"
+                            style="background:var(--usb-green);color:#fff;">
+                        <i class="bi bi-save me-1"></i> Guardar disponibilidad
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla de disponibilidades -->
+    <div class="content-card-body p-0">
+        {% if disponibilidades %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Día</th>
+                        <th>Hora inicio</th>
+                        <th>Hora fin</th>
+                        <th>Modalidad</th>
+                        <th>Materia</th>
+                        <th>Ubicación / Enlace</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for disp in disponibilidades %}
+                    <tr>
+                        <td class="fw-semibold">{{ disp.get_dia_semana_display }}</td>
+                        <td>{{ disp.hora_inicio|time:"H:i" }}</td>
+                        <td>{{ disp.hora_fin|time:"H:i" }}</td>
+                        <td>
+                            <span class="badge
+                                {% if disp.modalidad == 'PRESENCIAL' %}bg-success
+                                {% elif disp.modalidad == 'VIRTUAL' %}bg-info text-dark
+                                {% else %}bg-secondary{% endif %}">
+                                {{ disp.get_modalidad_display }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if disp.materia %}
+                            <span class="badge badge-materia">{{ disp.materia.nombre }}</span>
+                            {% else %}
+                            <span class="text-muted" style="font-size:.8rem;">General</span>
+                            {% endif %}
+                        </td>
+                        <td style="font-size:.83rem;">{{ disp.ubicacion|default:"—" }}</td>
+                        <td>
+                            <form method="post"
+                                  action="{% url 'sesiones:eliminar_disponibilidad' disp.pk %}"
+                                  onsubmit="return confirm('¿Eliminar este horario?')">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                                    <i class="bi bi-trash3"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-4 text-muted">
+            <i class="bi bi-calendar-x" style="font-size:2rem;"></i>
+            <p class="mt-2 mb-0">No tienes horarios de tutoría configurados.</p>
+            <small>Usa el botón "Agregar horario" para publicar tu disponibilidad.</small>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- ── Monitores de Mis Materias ─────────────────────────────────────── -->
+<div class="content-card mb-3">
+    <div class="content-card-header">
+        <i class="bi bi-people-fill me-1"></i> Monitores de Mis Materias
+    </div>
+    <div class="content-card-body p-0">
+        {% if monitores %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Monitor</th>
+                        <th>Materias</th>
+                        <th>Sesiones</th>
+                        <th>Prom. Estrellas</th>
+                        <th>Hake</th>
+                        <th>Ranking</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for monitor in monitores %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="avatar-circle" style="width:32px;height:32px;font-size:.75rem;">
+                                    {{ monitor.usuario.first_name|first|upper }}{{ monitor.usuario.last_name|first|upper }}
+                                </div>
+                                <div>
+                                    <div class="fw-semibold">{{ monitor.usuario.nombre_completo }}</div>
+                                    <small class="text-muted">{{ monitor.usuario.email }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            {% for mat in monitor.materias.all %}
+                            <span class="badge badge-materia me-1">{{ mat.nombre }}</span>
+                            {% endfor %}
+                        </td>
+                        <td>{{ monitor.total_sesiones }}</td>
+                        <td>
+                            <span class="text-warning">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= monitor.promedio_estrellas %}
+                                    <i class="bi bi-star-fill"></i>
+                                    {% else %}
+                                    <i class="bi bi-star" style="color:#ccc;"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </span>
+                            <small class="text-muted ms-1">{{ monitor.promedio_estrellas|floatformat:1 }}</small>
+                        </td>
+                        <td>
+                            <div class="progress" style="height:8px;width:70px;">
+                                <div class="progress-bar bg-success"
+                                     style="width:{% widthratio monitor.promedio_hake 1 100 %}%"></div>
+                            </div>
+                            <small>{{ monitor.promedio_hake|floatformat:2 }}</small>
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary">{{ monitor.calcular_ranking|floatformat:2 }}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-4 text-muted">
+            <i class="bi bi-people" style="font-size:2rem;"></i>
+            <p class="mt-2 mb-0">No hay monitores activos en tus materias.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% else %}
+<div class="alert alert-warning">
+    <i class="bi bi-exclamation-triangle-fill me-1"></i>
+    No se encontró perfil de docente. Contacta al administrador.
+</div>
+{% endif %}
+
+{% endblock %}

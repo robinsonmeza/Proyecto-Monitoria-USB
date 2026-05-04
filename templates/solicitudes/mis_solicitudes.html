@@ -1,0 +1,301 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mis Solicitudes — MonitorHub USB{% endblock %}
+
+{% block nav_tabs %}
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'usuarios:dashboard' %}">
+        <i class="bi bi-house-fill me-1"></i> Inicio
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'monitores:lista' %}">
+        <i class="bi bi-search me-1"></i> Buscar Monitoria
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link active" href="{% url 'solicitudes:lista' %}">
+        <i class="bi bi-file-earmark-text me-1"></i> Mis Monitorias
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'mensajes:bandeja' %}">
+        <i class="bi bi-chat-dots me-1"></i> Mensajes
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'calificaciones:mis_calificaciones' %}">
+        <i class="bi bi-star me-1"></i> Calificaciones
+    </a>
+</li>
+{% endblock %}
+
+{% block sidebar_links %}
+<a href="{% url 'usuarios:dashboard' %}" class="nav-link">
+    <i class="bi bi-house"></i> Inicio
+</a>
+<a href="{% url 'monitores:lista' %}" class="nav-link">
+    <i class="bi bi-search"></i> Buscar Monitor
+</a>
+<a href="{% url 'solicitudes:lista' %}" class="nav-link active">
+    <i class="bi bi-file-earmark-check"></i> Mis Solicitudes
+</a>
+<a href="{% url 'mensajes:bandeja' %}" class="nav-link">
+    <i class="bi bi-inbox"></i> Mensajes
+</a>
+<a href="{% url 'calificaciones:mis_calificaciones' %}" class="nav-link">
+    <i class="bi bi-star-half"></i> Calificaciones
+</a>
+<hr class="my-2">
+<a href="{% url 'usuarios:logout' %}" class="nav-link text-danger">
+    <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+</a>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .nav-tabs .nav-link { font-size:.85rem; }
+    .nav-tabs .nav-link.active {
+        color: var(--usb-green) !important;
+        font-weight: 600;
+        border-bottom: 2px solid var(--usb-green);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Pestañas: Monitorías / Tutorías -->
+<ul class="nav nav-tabs mb-3" id="solicitudesTabs">
+    <li class="nav-item">
+        <a class="nav-link active" id="tab-monitorias" data-bs-toggle="tab" href="#panel-monitorias">
+            <i class="bi bi-person-badge me-1"></i> Monitorías
+            {% if solicitudes %}<span class="badge bg-secondary ms-1">{{ solicitudes.count }}</span>{% endif %}
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="tab-tutorias" data-bs-toggle="tab" href="#panel-tutorias">
+            <i class="bi bi-person-video3 me-1"></i> Tutorías con Docentes
+            {% if tutorias %}<span class="badge bg-secondary ms-1">{{ tutorias.count }}</span>{% endif %}
+        </a>
+    </li>
+</ul>
+
+<div class="tab-content">
+
+<!-- ── Panel Monitorías ──────────────────────────────────────────── -->
+<div class="tab-pane fade show active" id="panel-monitorias">
+<div class="content-card">
+    <div class="content-card-header d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-file-earmark-text-fill me-1"></i> Mis Solicitudes de Monitoria</span>
+        <a href="{% url 'monitores:lista' %}" class="btn btn-sm btn-light">
+            <i class="bi bi-plus-circle me-1"></i> Nueva Solicitud
+        </a>
+    </div>
+    <div class="content-card-body p-0">
+        {% if solicitudes %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Monitor</th>
+                        <th>Materia</th>
+                        <th>Nota Inicial</th>
+                        <th>Nota Corte</th>
+                        <th>Estado</th>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sol in solicitudes %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="avatar-circle" style="width:32px;height:32px;font-size:.75rem;">
+                                    {{ sol.monitor.usuario.first_name|first|upper }}{{ sol.monitor.usuario.last_name|first|upper }}
+                                </div>
+                                <div>
+                                    <div class="fw-semibold" style="font-size:.85rem;">
+                                        {{ sol.monitor.usuario.nombre_completo }}
+                                    </div>
+                                    <small class="text-muted">{{ sol.monitor.usuario.email }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge badge-materia">{{ sol.materia.nombre }}</span>
+                        </td>
+                        <td>{{ sol.nota_inicial|floatformat:1 }}</td>
+                        <td>{{ sol.nota_corte_actual|floatformat:1 }}</td>
+                        <td>
+                            {% if sol.estado == 'PENDIENTE' %}
+                            <span class="badge badge-pendiente">
+                                <i class="bi bi-hourglass-split me-1"></i>Pendiente
+                            </span>
+                            {% elif sol.estado == 'ACTIVO' %}
+                            <span class="badge badge-activo">
+                                <i class="bi bi-play-fill me-1"></i>Activo
+                            </span>
+                            {% elif sol.estado == 'COMPLETADO' %}
+                            <span class="badge badge-completado">
+                                <i class="bi bi-check-circle-fill me-1"></i>Completado
+                            </span>
+                            {% elif sol.estado == 'CANCELADO' %}
+                            <span class="badge badge-cancelado">
+                                <i class="bi bi-x-circle-fill me-1"></i>Cancelado
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td style="font-size:.82rem;">{{ sol.fecha_creacion|date:"d/m/Y" }}</td>
+                        <td>
+                            <div class="d-flex gap-1 flex-wrap">
+                                <!-- Mensajes -->
+                                <a href="{% url 'mensajes:bandeja' %}?solicitud={{ sol.pk }}"
+                                   class="btn btn-sm btn-outline-secondary"
+                                   title="Mensajes">
+                                    <i class="bi bi-chat-dots"></i>
+                                </a>
+                                <!-- Calificar (solo COMPLETADO sin calificación) -->
+                                {% if sol.estado == 'COMPLETADO' %}
+                                    {% if not sol.calificacion %}
+                                    <a href="{% url 'calificaciones:calificar' sol.pk %}"
+                                       class="btn btn-sm"
+                                       style="background:var(--usb-orange);color:#fff;"
+                                       title="Calificar monitoria">
+                                        <i class="bi bi-star-fill"></i> Calificar
+                                    </a>
+                                    {% else %}
+                                    <span class="badge bg-secondary" title="Ya calificada">
+                                        <i class="bi bi-check-all"></i> Calificada
+                                    </span>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-file-earmark-x" style="font-size:3rem;"></i>
+            <h5 class="mt-3">No tienes solicitudes</h5>
+            <p>Busca un monitor disponible para comenzar.</p>
+            <a href="{% url 'monitores:lista' %}" class="btn" style="background:var(--usb-green);color:#fff;">
+                <i class="bi bi-search me-1"></i> Buscar Monitor
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+</div><!-- /panel-monitorias -->
+
+<!-- ── Panel Tutorías ──────────────────────────────────────────────── -->
+<div class="tab-pane fade" id="panel-tutorias">
+<div class="content-card">
+    <div class="content-card-header d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-person-video3-fill me-1"></i>
+            {% if request.user.rol == 'DOCENTE' %}Solicitudes de Tutoría Recibidas{% else %}Mis Solicitudes de Tutoría{% endif %}
+        </span>
+        {% if request.user.rol == 'ESTUDIANTE' %}
+        <a href="{% url 'usuarios:dashboard' %}" class="btn btn-sm btn-light">
+            <i class="bi bi-plus-circle me-1"></i> Buscar Docente
+        </a>
+        {% endif %}
+    </div>
+    <div class="content-card-body p-0">
+        {% if tutorias %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        {% if request.user.rol == 'DOCENTE' %}
+                        <th>Estudiante</th>
+                        {% else %}
+                        <th>Docente</th>
+                        {% endif %}
+                        <th>Materia</th>
+                        <th>Nota Inicial</th>
+                        <th>Nota Corte</th>
+                        <th>Estado</th>
+                        <th>Fecha</th>
+                        <th>Notas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tut in tutorias %}
+                    <tr>
+                        {% if request.user.rol == 'DOCENTE' %}
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="avatar-circle" style="width:32px;height:32px;font-size:.75rem;">
+                                    {{ tut.estudiante.usuario.first_name|first|upper }}{{ tut.estudiante.usuario.last_name|first|upper }}
+                                </div>
+                                <div>
+                                    <div class="fw-semibold" style="font-size:.85rem;">{{ tut.estudiante.usuario.nombre_completo }}</div>
+                                    <small class="text-muted">{{ tut.estudiante.usuario.email }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        {% else %}
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="avatar-circle" style="width:32px;height:32px;font-size:.75rem;">
+                                    {{ tut.docente.usuario.first_name|first|upper }}{{ tut.docente.usuario.last_name|first|upper }}
+                                </div>
+                                <div>
+                                    <div class="fw-semibold" style="font-size:.85rem;">{{ tut.docente.usuario.nombre_completo }}</div>
+                                    <small class="text-muted">{{ tut.docente.departamento }}</small>
+                                </div>
+                            </div>
+                        </td>
+                        {% endif %}
+                        <td><span class="badge badge-materia">{{ tut.materia.nombre }}</span></td>
+                        <td>{{ tut.nota_inicial|floatformat:1 }}</td>
+                        <td>{{ tut.nota_corte_actual|floatformat:1 }}</td>
+                        <td>
+                            {% if tut.estado == 'PENDIENTE' %}
+                            <span class="badge badge-pendiente"><i class="bi bi-hourglass-split me-1"></i>Pendiente</span>
+                            {% elif tut.estado == 'ACTIVO' %}
+                            <span class="badge badge-activo"><i class="bi bi-play-fill me-1"></i>Activo</span>
+                            {% elif tut.estado == 'COMPLETADO' %}
+                            <span class="badge badge-completado"><i class="bi bi-check-circle-fill me-1"></i>Completado</span>
+                            {% elif tut.estado == 'CANCELADO' %}
+                            <span class="badge badge-cancelado"><i class="bi bi-x-circle-fill me-1"></i>Cancelado</span>
+                            {% endif %}
+                        </td>
+                        <td style="font-size:.82rem;">{{ tut.fecha_creacion|date:"d/m/Y" }}</td>
+                        <td style="font-size:.8rem;max-width:160px;">
+                            {{ tut.notas|truncatechars:60|default:"—" }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-person-video3" style="font-size:3rem;"></i>
+            <h5 class="mt-3">
+                {% if request.user.rol == 'DOCENTE' %}No has recibido solicitudes de tutoría
+                {% else %}No tienes tutorías solicitadas{% endif %}
+            </h5>
+            {% if request.user.rol == 'ESTUDIANTE' %}
+            <p>Ve al inicio y busca un docente con disponibilidad.</p>
+            <a href="{% url 'usuarios:dashboard' %}" class="btn"
+               style="background:var(--usb-teal);color:#fff;">
+                <i class="bi bi-search me-1"></i> Buscar Docente
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+</div><!-- /panel-tutorias -->
+
+</div><!-- /tab-content -->
+
+{% endblock %}

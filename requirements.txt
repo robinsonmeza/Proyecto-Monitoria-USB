@@ -1,0 +1,20 @@
+# ── Core ────────────────────────────────────────────────────────────────────
+Django>=4.2,<5.0
+django-environ           # Manejo de variables de entorno (.env)
+
+# ── Base de datos ───────────────────────────────────────────────────────────
+mysqlclient              # Driver MySQL (producción — servidor universitario)
+# sqlite3 incluido en Python stdlib (desarrollo local)
+
+# ── Tiempo real (WebSocket / Chat) ──────────────────────────────────────────
+channels                 # Django Channels — soporte ASGI
+channels-redis           # Channel Layer con Redis
+redis                    # Cliente Redis
+daphne                   # Servidor ASGI (reemplaza runserver en producción)
+
+# ── Microsoft 365 ───────────────────────────────────────────────────────────
+msal                     # Microsoft Authentication Library (OAuth 2.0 / Azure AD)
+requests                 # HTTP — llamadas a Microsoft Graph API
+
+# ── Imágenes ────────────────────────────────────────────────────────────────
+Pillow                   # Procesamiento de imágenes (logos, avatares)

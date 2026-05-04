@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MonitorHub USB — Documentación del Proyecto</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: { primaryColor: '#1a1a2e', primaryTextColor: '#fff', primaryBorderColor: '#0f3460', lineColor: '#4a5568', secondaryColor: '#f8fafc', tertiaryColor: '#e2e8f0', fontFamily: 'Inter, sans-serif', fontSize: '13px' } });</script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      color: #1a1a2e;
+      background: #fff;
+      line-height: 1.6;
+    }
+
+    /* PORTADA */
+    .cover {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      color: white;
+      text-align: center;
+      padding: 40px;
+      page-break-after: always;
+    }
+
+    .cover .logo-area {
+      margin-bottom: 40px;
+    }
+
+    .cover .logo-circle {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #e94560, #0f3460);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin: 0 auto 16px;
+      box-shadow: 0 8px 32px rgba(233,69,96,0.4);
+    }
+
+    .cover h1 {
+      font-size: 48px;
+      font-weight: 700;
+      letter-spacing: -1px;
+      margin-bottom: 8px;
+    }
+
+    .cover h1 span { color: #e94560; }
+
+    .cover .subtitle {
+      font-size: 18px;
+      font-weight: 300;
+      opacity: 0.8;
+      margin-bottom: 48px;
+    }
+
+    .cover .divider {
+      width: 60px;
+      height: 3px;
+      background: #e94560;
+      margin: 24px auto;
+      border-radius: 2px;
+    }
+
+    .cover .meta {
+      font-size: 13px;
+      opacity: 0.7;
+      line-height: 2;
+    }
+
+    .cover .meta strong { opacity: 1; color: #e2e8f0; }
+
+    .cover .badge {
+      display: inline-block;
+      background: rgba(233,69,96,0.2);
+      border: 1px solid rgba(233,69,96,0.4);
+      color: #e94560;
+      padding: 6px 18px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: 32px;
+    }
+
+    /* CONTENIDO */
+    .content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 40px;
+    }
+
+    /* ÍNDICE */
+    .toc {
+      background: #f8fafc;
+      border-left: 4px solid #e94560;
+      border-radius: 0 8px 8px 0;
+      padding: 28px 32px;
+      margin-bottom: 48px;
+      page-break-after: always;
+    }
+
+    .toc h2 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .toc ol {
+      padding-left: 20px;
+    }
+
+    .toc li {
+      margin: 8px 0;
+      color: #4a5568;
+    }
+
+    .toc li a {
+      color: #0f3460;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .toc li a:hover { color: #e94560; }
+
+    .toc .toc-sub {
+      padding-left: 16px;
+      margin-top: 4px;
+    }
+
+    .toc .toc-sub li {
+      font-size: 12px;
+      margin: 4px 0;
+    }
+
+    /* SECCIONES */
+    section {
+      margin-bottom: 56px;
+      page-break-inside: avoid;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    .section-number {
+      background: #e94560;
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    h2.section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1a1a2e;
+    }
+
+    h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: #2d3748;
+      margin: 24px 0 12px;
+    }
+
+    p {
+      color: #4a5568;
+      margin-bottom: 12px;
+    }
+
+    /* TABLAS */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0 24px;
+      font-size: 12.5px;
+    }
+
+    thead tr {
+      background: #1a1a2e;
+      color: white;
+    }
+
+    thead th {
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    tbody tr:nth-child(even) { background: #f8fafc; }
+    tbody tr:hover { background: #eef2ff; }
+
+    tbody td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #e2e8f0;
+      color: #4a5568;
+      vertical-align: top;
+    }
+
+    tbody td strong { color: #1a1a2e; }
+
+    /* CARDS */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin: 16px 0;
+    }
+
+    .card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 18px 20px;
+    }
+
+    .card h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card h4 .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #e94560;
+      flex-shrink: 0;
+    }
+
+    .card p, .card ul {
+      font-size: 12px;
+      color: #4a5568;
+      margin: 0;
+    }
+
+    .card ul { padding-left: 16px; }
+    .card ul li { margin: 4px 0; }
+
+    /* CANVAS BMC */
+    .bmc-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: auto auto;
+      gap: 8px;
+      margin: 16px 0;
+    }
+
+    .bmc-cell {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 11.5px;
+    }
+
+    .bmc-cell.accent { border-top: 3px solid #e94560; }
+    .bmc-cell.accent2 { border-top: 3px solid #0f3460; }
+    .bmc-cell.accent3 { border-top: 3px solid #48bb78; }
+    .bmc-cell.accent4 { border-top: 3px solid #ed8936; }
+
+    .bmc-cell h4 {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #718096;
+      margin-bottom: 8px;
+    }
+
+    .bmc-cell ul {
+      padding-left: 14px;
+      color: #4a5568;
+    }
+
+    .bmc-cell ul li { margin: 3px 0; }
+
+    .bmc-bottom {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .bmc-bottom .bmc-cell { }
+
+    /* CÓDIGO */
+    .code-block {
+      background: #1a1a2e;
+      color: #e2e8f0;
+      border-radius: 8px;
+      padding: 20px 24px;
+      font-family: 'Courier New', monospace;
+      font-size: 11.5px;
+      line-height: 1.7;
+      margin: 16px 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    .code-block .comment { color: #68d391; }
+    .code-block .keyword { color: #90cdf4; }
+    .code-block .string { color: #fbd38d; }
+
+    /* FLUJO */
+    .flow {
+      background: #f0fff4;
+      border: 1px solid #9ae6b4;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 16px 0;
+    }
+
+    .flow-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin: 10px 0;
+    }
+
+    .flow-step .step-num {
+      background: #48bb78;
+      color: white;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .flow-step .step-text {
+      font-size: 12.5px;
+      color: #2d3748;
+    }
+
+    .flow-arrow {
+      text-align: center;
+      color: #48bb78;
+      font-size: 18px;
+      margin: 2px 0 2px 34px;
+    }
+
+    /* TECH STACK */
+    .stack-layer {
+      margin: 20px 0;
+    }
+
+    .stack-layer-title {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #a0aec0;
+      margin-bottom: 10px;
+      padding-left: 4px;
+    }
+
+    .stack-grid {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+    }
+
+    .stack-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .stack-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .stack-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+    .stack-item {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 14px 16px;
+      text-align: center;
+      border-top: 3px solid #e2e8f0;
+      transition: box-shadow 0.2s;
+    }
+
+    .stack-item.cat-backend  { border-top-color: #4299e1; }
+    .stack-item.cat-frontend { border-top-color: #48bb78; }
+    .stack-item.cat-data     { border-top-color: #ed8936; }
+    .stack-item.cat-realtime { border-top-color: #9f7aea; }
+    .stack-item.cat-integration { border-top-color: #0078d4; }
+    .stack-item.cat-infra    { border-top-color: #718096; }
+    .stack-item.cat-tbd      { border: 1.5px dashed #cbd5e0; border-top: 2px dashed #cbd5e0; background: #fafafa; }
+
+    .stack-item .tech-icon {
+      font-size: 22px;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .stack-item .tech-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin-bottom: 3px;
+    }
+
+    .stack-item.cat-tbd .tech-name { color: #a0aec0; }
+
+    .stack-item .tech-role {
+      font-size: 11px;
+      color: #718096;
+      line-height: 1.4;
+    }
+
+    .stack-item .tech-badge {
+      display: inline-block;
+      color: white;
+      font-size: 9px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 700;
+      margin-top: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-backend    { background: #4299e1; }
+    .badge-frontend   { background: #48bb78; }
+    .badge-data       { background: #ed8936; }
+    .badge-realtime   { background: #9f7aea; }
+    .badge-integration{ background: #0078d4; }
+    .badge-infra      { background: #718096; }
+    .badge-tbd        { background: #cbd5e0; color: #4a5568; }
+
+    /* DIAGRAMA */
+    .diagram-container {
+      text-align: center;
+      margin: 24px 0;
+      padding: 16px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+    }
+
+    .diagram-img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .diagram-caption {
+      font-size: 11px;
+      color: #718096;
+      margin-top: 10px;
+      font-style: italic;
+    }
+
+    /* DIAGRAMA PLACEHOLDER */
+    .diagram-placeholder {
+      background: #f8fafc;
+      border: 2px dashed #cbd5e0;
+      border-radius: 10px;
+      padding: 40px;
+      text-align: center;
+      margin: 20px 0;
+      color: #a0aec0;
+    }
+
+    .diagram-placeholder .icon { font-size: 36px; margin-bottom: 12px; }
+    .diagram-placeholder p { color: #718096; font-size: 12px; margin: 0; }
+    .diagram-placeholder strong { color: #4a5568; }
+
+    /* HAKE */
+    .formula-box {
+      background: linear-gradient(135deg, #f0f4ff, #e8ecff);
+      border: 1px solid #c3dafe;
+      border-radius: 10px;
+      padding: 24px 28px;
+      margin: 16px 0;
+      text-align: center;
+    }
+
+    .formula {
+      font-family: 'Courier New', monospace;
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a1a2e;
+      margin: 12px 0;
+    }
+
+    .formula-desc {
+      font-size: 12px;
+      color: #4a5568;
+      margin-top: 12px;
+    }
+
+    /* ROLES BADGE */
+    .role-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .role-estudiante { background: #bee3f8; color: #2b6cb0; }
+    .role-monitor { background: #c6f6d5; color: #276749; }
+    .role-docente { background: #fefcbf; color: #744210; }
+    .role-admin { background: #fed7e2; color: #97266d; }
+
+    /* CHECK / X */
+    .check { color: #48bb78; font-weight: 700; }
+    .cross { color: #fc8181; font-weight: 700; }
+
+    /* FOOTER */
+    footer {
+      background: #1a1a2e;
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      padding: 24px;
+      font-size: 11px;
+      margin-top: 60px;
+    }
+
+    footer strong { color: rgba(255,255,255,0.8); }
+
+    /* PRINT */
+    @media print {
+      .cover { height: 100vh; }
+      section { page-break-inside: avoid; }
+      .content { padding: 20px 30px; }
+      body { font-size: 12px; }
+      .code-block { font-size: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- PORTADA -->
+<div class="cover">
+  <div class="logo-area">
+    <div class="logo-circle">M</div>
+  </div>
+  <h1>Monitor<span>Hub</span></h1>
+  <p class="subtitle">Plataforma de Gestión de Monitorias Académicas</p>
+  <div class="divider"></div>
+  <div class="meta">
+    <strong>Institución:</strong> Universidad Simón Bolívar — Cúcuta<br/>
+    <strong>Materia:</strong> Ingenieria de Software<br/>
+    <strong>Docente:</strong> Maria Carlota<br/>    
+    <strong>Correo institucional:</strong> @unisimon.edu.co<br/>
+    <strong>Año:</strong> 2026
+  </div>
+  <div class="badge">Documentación Técnica</div>
+</div>
+
+<div class="content">
+
+  <!-- ÍNDICE -->
+  <div class="toc">
+    <h2>Tabla de Contenido</h2>
+    <ol>
+      <li><a href="#descripcion">Descripción del Proyecto</a></li>
+      <li><a href="#roles">Roles y Capacidades</a></li>
+      <li><a href="#flujos">Flujos Principales del Sistema</a>
+        <ol class="toc-sub">
+          <li><a href="#flujo-auth">Autenticación Microsoft OAuth</a></li>
+          <li><a href="#flujo-solicitud">Solicitud de Monitoria</a></li>
+          <li><a href="#flujo-calificacion">Calificación de Monitor</a></li>
+          <li><a href="#flujo-tutoria">Solicitud de Tutoría con Docente</a></li>
+        </ol>
+      </li>
+      <li><a href="#ranking">Sistema de Ranking y Evaluación</a></li>
+      <li><a href="#diagramas">Diagramas UML</a>
+        <ol class="toc-sub">
+          <li><a href="#casos-uso">Diagrama de Casos de Uso</a></li>
+          <li><a href="#clases">Diagrama de Clases</a></li>
+          <li><a href="#secuencia">Diagramas de Secuencia</a></li>
+        </ol>
+      </li>
+      <li><a href="#negocio">Modelo de Negocio (Canvas)</a></li>
+      <li><a href="#arquitectura">Arquitectura Técnica</a></li>
+    </ol>
+  </div>
+
+  <!-- 1. DESCRIPCIÓN -->
+  <section id="descripcion">
+    <div class="section-header">
+      <div class="section-number">1</div>
+      <h2 class="section-title">Descripción del Proyecto</h2>
+    </div>
+
+    <p>
+      <strong>MonitorHub USB</strong> es una plataforma web multiplataforma diseñada para la
+      Universidad Simón Bolívar que conecta a estudiantes con <strong>monitores académicos</strong> —
+      compañeros con habilidades pedagógicas excepcionales aprobados por la institución — y con
+      <strong>docentes supervisores</strong> que ofrecen sesiones de tutoría directa,
+      todo a través de buzón de mensajes y videollamadas integradas con Microsoft Teams.
+    </p>
+    <p>
+      El sistema gestiona dos flujos paralelos: la <strong>monitoria</strong> (estudiante → monitor,
+      supervisada por docente) y la <strong>tutoría</strong> (estudiante → docente directamente).
+      En ambos casos se hace seguimiento académico mediante la
+      <strong>Ganancia Normalizada de Hake</strong>, estrellas de satisfacción y volumen de sesiones.
+    </p>
+
+    <h3>Objetivos</h3>
+    <div class="card-grid">
+      <div class="card">
+        <h4><span class="dot"></span>Objetivo General</h4>
+        <p>Desarrollar una plataforma digital que facilite la conexión entre estudiantes, monitores académicos y docentes de la USB, optimizando los procesos de solicitud, seguimiento y evaluación de monitorias y tutorías.</p>
+      </div>
+      <div class="card">
+        <h4><span class="dot"></span>Alcance</h4>
+        <ul>
+          <li>Plataforma web responsiva (multiplataforma)</li>
+          <li>Autenticación exclusiva con cuentas @unisimon.edu.co</li>
+          <li>Dos flujos académicos: monitorias (estudiante→monitor) y tutorías (estudiante→docente)</li>
+          <li>Integración con Microsoft 365 (Teams, correo)</li>
+          <li>Sistema de evaluación con métricas académicas (Hake)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. ROLES -->
+  <section id="roles">
+    <div class="section-header">
+      <div class="section-number">2</div>
+      <h2 class="section-title">Roles y Capacidades</h2>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Capacidad</th>
+          <th>Estudiante</th>
+          <th>Monitor</th>
+          <th>Docente</th>
+          <th>Admin</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Iniciar sesión con Microsoft</td>
+          <td class="check">✔</td>
+          <td class="check">✔</td>
+          <td class="check">✔</td>
+          <td class="check">✔</td>
+        </tr>
+        <tr>
+          <td>Ver dashboard personal</td>
+          <td class="check">✔</td>
+          <td class="check">✔</td>
+          <td class="check">✔</td>
+          <td class="check">✔</td>
+        </tr>
+        <tr>
+          <td>Buscar y solicitar monitoria</td>
+          <td class="check">✔</td>
+          <td><span title="Como perfil estudiante">✔*</span></td>
+          <td class="cross">✗</td>
+          <td class="cross">✗</td>
+        </tr>
+        <tr>
+          <td>Solicitar tutoría a un docente</td>
+          <td class="check">✔</td>
+          <td><span title="Como perfil estudiante">✔*</span></td>
+          <td class="cross">✗</td>
+          <td class="cross">✗</td>
+        </tr>
+        <tr>
+          <td>Publicar disponibilidad de monitoria</td>
+          <td class="cross">✗</td>
+          <td class="check">✔</td>
+          <td class="cross">✗</td>
+          <td class="cross">✗</td>
+        </tr>
+        <tr>
+          <td>Publicar disponibilidad de tutoría</td>
+          <td class="cross">✗</td>
+          <td class="cross">✗</td>
+          <td class="check">✔</td>
+          <td class="cross">✗</td>
+        </tr>
+        <tr>
+          <td>Ser contactado por estudiantes</td>
+          <td class="cross">✗</td>
+          <td class="check">✔</td>
+          <td class="check">✔</td>
+          <td class="cross">✗</td>
+        </tr>
+        <tr>
+          <td>Ver información de estudiantes</td>
+          <td class="cross">✗</td>
+          <td class="cross">✗</td>
+          <td class="check">✔</td>
+          <td class="check">✔</td>
+        </tr>
+        <tr>
+          <td>Supervisar sesiones y agenda de monitores</td>
+          <td class="cross">✗</td>
+          <td class="cross">✗</td>
+          <td><span title="Solo sus materias">✔†</span></td>
+          <td class="check">✔</td>
+        </tr>
+        <tr>
+          <td>Ver comentarios privados de estudiantes</td>
+          <td class="cross">✗</td>
+          <td class="cross">✗</td>
+          <td class="check">✔</td>
+          <td class="check">✔</td>
+        </tr>
+        <tr>
+          <td>Aprobar perfil de monitor</td>
+          <td class="cross">✗</td>
+          <td class="cross">✗</td>
+          <td class="cross">✗</td>
+          <td class="check">✔</td>
+        </tr>
+        <tr>
+          <td>Crear datos de prueba</td>
+          <td class="cross">✗</td>
+          <td class="cross">✗</td>
+          <td class="cross">✗</td>
+          <td class="check">✔</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:11px; color:#718096;">* Como perfil estudiante &nbsp;|&nbsp; † Solo materias asignadas al docente</p>
+
+    <h3>Dualidad del rol Monitor</h3>
+    <p>Un monitor posee dos perfiles bajo la misma cuenta institucional. Puede alternar entre su perfil de monitor (recibe solicitudes, publica disponibilidad) y su perfil de estudiante (solicita monitorias de otras materias). La activación del perfil de monitor requiere aprobación previa del Administrador.</p>
+  </section>
+
+  <!-- 3. FLUJOS -->
+  <section id="flujos">
+    <div class="section-header">
+      <div class="section-number">3</div>
+      <h2 class="section-title">Flujos Principales del Sistema</h2>
+    </div>
+
+    <h3 id="flujo-auth">3.1 Autenticación con Microsoft OAuth</h3>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="step-num">1</div>
+        <div class="step-text">El usuario accede a MonitorHub y hace clic en <strong>"Iniciar sesión con Microsoft"</strong></div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="step-num">2</div>
+        <div class="step-text">El sistema redirige a <strong>Azure AD (Microsoft OAuth 2.0)</strong> para autenticación</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="step-num">3</div>
+        <div class="step-text">Microsoft valida que el correo pertenezca al dominio <strong>@unisimon.edu.co</strong>. Si no, acceso denegado</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="step-num">4</div>
+        <div class="step-text">El sistema recibe el token de acceso y crea o actualiza el registro del usuario en la base de datos</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="step-num">5</div>
+        <div class="step-text">El usuario es redirigido a su <strong>Dashboard personalizado</strong> según su rol</div>
+      </div>
+    </div>
+
+    <h3 id="flujo-solicitud">3.2 Solicitud de Monitoria</h3>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="step-num">1</div>
+        <div class="step-text">El estudiante accede a <strong>"Buscar Monitoria"</strong> y filtra por materia, nombre o ranking</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="step-num">2</div>
+        <div class="step-text">Selecciona un monitor y consulta su disponibilidad horaria (presencial / virtual)</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="step-num">3</div>
+        <div class="step-text">Completa el <strong>mini-registro</strong>: datos básicos, materia, nota promedio actual, nota del corte en curso y docente asignado</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="step-num">4</div>
+        <div class="step-text">El sistema crea la <strong>SolicitudMonitoria</strong> y envía notificaciones vía correo institucional a: Estudiante, Monitor y Docente</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="step-num">5</div>
+        <div class="step-text">Se habilita el <strong>canal de mensajes</strong> entre el estudiante y el monitor (buzón asíncrono y chat en tiempo real)</div>
+      </div>
+    </div>
+
+    <h3 id="flujo-calificacion">3.3 Calificación de Monitor</h3>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="step-num">1</div>
+        <div class="step-text">Al finalizar la monitoria, el estudiante accede a sus <strong>sesiones completadas</strong></div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="step-num">2</div>
+        <div class="step-text">Ingresa: <strong>calificación de 1 a 5 estrellas</strong> (visible para todos), <strong>comentario privado</strong> (solo visible al docente) y <strong>nota final obtenida</strong></div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="step-num">3</div>
+        <div class="step-text">El sistema calcula automáticamente el <strong>puntaje Hake</strong> de la sesión</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="step-num">4</div>
+        <div class="step-text">Se actualizan los <strong>promedios del monitor</strong>: estrellas, Hake y total de sesiones. El ranking se recalcula</div>
+      </div>
+    </div>
+  </section>
+
+    <h3 id="flujo-tutoria">3.4 Solicitud de Tutoría con Docente</h3>
+    <p>Flujo directo estudiante → docente, independiente del flujo de monitoria. El docente publica su disponibilidad horaria y el estudiante solicita una sesión personalizada.</p>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="step-num">1</div>
+        <div class="step-text">El <strong>docente</strong> accede a su dashboard y abre la sección <strong>"Mi Disponibilidad para Tutorías"</strong></div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="step-num">2</div>
+        <div class="step-text">Agrega uno o más bloques de horario: día, hora inicio/fin, modalidad (Presencial / Virtual / Ambas), materia opcional y ubicación o enlace</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="step-num">3</div>
+        <div class="step-text">El estudiante ve en su dashboard la sección <strong>"Tutorías con Docentes"</strong> con las cards de docentes que tienen horarios activos publicados</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="step-num">4</div>
+        <div class="step-text">El estudiante hace clic en <strong>"Solicitar Tutoría"</strong>, elige materia, nota inicial y corte actual, y agrega notas opcionales</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="step-num">5</div>
+        <div class="step-text">El sistema crea la <strong>SolicitudTutoria</strong> y envía notificaciones al docente y al estudiante</div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="step-num">6</div>
+        <div class="step-text">La solicitud aparece en la pestaña <strong>"Tutorías con Docentes"</strong> de "Mis Solicitudes", y en el dashboard del docente como <em>pendiente</em></div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Concepto</th><th>Monitoria</th><th>Tutoría Docente</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Tutor</strong></td>
+          <td>Monitor (estudiante aprobado)</td>
+          <td>Docente institucional</td>
+        </tr>
+        <tr>
+          <td><strong>Supervisor</strong></td>
+          <td>Docente asignado a la materia</td>
+          <td>No aplica (docente es el tutor)</td>
+        </tr>
+        <tr>
+          <td><strong>Aprobación previa</strong></td>
+          <td>Sí — el admin aprueba al monitor</td>
+          <td>No — el docente publica directamente</td>
+        </tr>
+        <tr>
+          <td><strong>Disponibilidad</strong></td>
+          <td>DisponibilidadMonitor</td>
+          <td>DisponibilidadDocente (con materia opcional)</td>
+        </tr>
+        <tr>
+          <td><strong>Modelo de solicitud</strong></td>
+          <td>SolicitudMonitoria</td>
+          <td>SolicitudTutoria</td>
+        </tr>
+        <tr>
+          <td><strong>Calificación con Hake</strong></td>
+          <td>Sí — afecta el ranking del monitor</td>
+          <td>No en MVP</td>
+        </tr>
+      </tbody>
+    </table>
+
+  <!-- 4. RANKING -->
+  <section id="ranking">
+    <div class="section-header">
+      <div class="section-number">4</div>
+      <h2 class="section-title">Sistema de Ranking y Evaluación</h2>
+    </div>
+
+    <p>El sistema evalúa el desempeño de cada monitor mediante tres indicadores combinados en un score compuesto visible en el ranking público.</p>
+
+    <h3>4.1 Ganancia Normalizada de Hake</h3>
+    <p>Modelo estadístico proveniente de la investigación en educación (Hake, 1998). Mide cuánto mejoró el estudiante en relación a cuánto podía mejorar, normalizando el efecto del punto de partida.</p>
+
+    <div class="formula-box">
+      <p style="font-size:12px; color:#4a5568; margin-bottom:8px;">Fórmula de Ganancia Normalizada de Hake</p>
+      <div class="formula">g = (nota_final − nota_inicial) / (nota_máxima − nota_inicial)</div>
+      <div class="formula-desc">
+        Donde <strong>nota_máxima = 5.0</strong> (escala colombiana)<br/>
+        Resultado en rango [−1, 1]
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Rango de g</th>
+          <th>Interpretación</th>
+          <th>Ejemplo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>g ≥ 0.7</strong></td>
+          <td>Ganancia alta — monitoria muy efectiva</td>
+          <td>Nota: 2.0 → 4.5 &nbsp;|&nbsp; g = 0.83</td>
+        </tr>
+        <tr>
+          <td><strong>0.3 ≤ g &lt; 0.7</strong></td>
+          <td>Ganancia media — monitoria efectiva</td>
+          <td>Nota: 3.0 → 4.0 &nbsp;|&nbsp; g = 0.50</td>
+        </tr>
+        <tr>
+          <td><strong>g &lt; 0.3</strong></td>
+          <td>Ganancia baja — monitoria con poca incidencia</td>
+          <td>Nota: 3.5 → 3.8 &nbsp;|&nbsp; g = 0.20</td>
+        </tr>
+        <tr>
+          <td><strong>g &lt; 0</strong></td>
+          <td>Retroceso — penaliza el ranking del monitor</td>
+          <td>Nota: 3.5 → 3.2 &nbsp;|&nbsp; g = −0.20</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>4.2 Score Compuesto del Ranking</h3>
+    <div class="formula-box">
+      <div class="formula">score = (0.40 × estrellas_norm) + (0.40 × hake_promedio) + (0.20 × volumen_norm)</div>
+      <div class="formula-desc">Los pesos son configurables desde el panel de administración</div>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Componente</th><th>Peso</th><th>Descripción</th><th>Visibilidad</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Estrellas (1–5)</strong></td>
+          <td>40%</td>
+          <td>Promedio de calificaciones por sesión</td>
+          <td>Pública</td>
+        </tr>
+        <tr>
+          <td><strong>Tasa de éxito Hake</strong></td>
+          <td>40%</td>
+          <td>Promedio de g entre todos los estudiantes atendidos</td>
+          <td>Pública</td>
+        </tr>
+        <tr>
+          <td><strong>Volumen</strong></td>
+          <td>20%</td>
+          <td>Total de monitorias completadas (normalizado)</td>
+          <td>Pública</td>
+        </tr>
+        <tr>
+          <td><strong>Comentarios escritos</strong></td>
+          <td>—</td>
+          <td>Retroalimentación textual del estudiante</td>
+          <td>Solo docente</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 5. DIAGRAMAS -->
+  <section id="diagramas">
+    <div class="section-header">
+      <div class="section-number">5</div>
+      <h2 class="section-title">Diagramas UML</h2>
+    </div>
+
+    <h3 id="casos-uso">5.1 Diagrama de Casos de Uso</h3>
+    <p>Representa los actores del sistema y las funcionalidades disponibles para cada uno, junto con sus relaciones de inclusión y extensión.</p>
+    <div class="diagram-container">
+      <img src="static/img/casos_uso.png" alt="Diagrama de Casos de Uso" class="diagram-img">
+      <p class="diagram-caption">Figura 1. Diagrama de Casos de Uso del sistema MonitorHub USB.</p>
+    </div>
+
+    <h3 id="clases">5.2 Diagrama de Clases</h3>
+    <p>Muestra las entidades del sistema, sus atributos, métodos y las relaciones entre ellas (asociación, composición, herencia).</p>
+    <div class="diagram-container">
+      <img src="static/img/clases.png" alt="Diagrama de Clases" class="diagram-img">
+      <p class="diagram-caption">Figura 2. Diagrama de Clases: Entidades y relaciones del dominio.</p>
+    </div>
+
+    <h3 id="secuencia">5.3 Diagramas de Secuencia</h3>
+
+    <p><strong>Secuencia 1 — Autenticación con Microsoft OAuth</strong></p>
+    <div class="diagram-container">
+      <img src="static/img/secuencia_auth.png" alt="Diagrama de Secuencia: Autenticación" class="diagram-img">
+      <p class="diagram-caption">Figura 3. Diagrama de Secuencia: Flujo de autenticación con Microsoft OAuth.</p>
+    </div>
+
+    <p><strong>Secuencia 2 — Solicitud de Monitoria</strong></p>
+    <div class="diagram-container">
+      <img src="static/img/secuencia_solicitud.png" alt="Diagrama de Secuencia: Solicitud" class="diagram-img">
+      <p class="diagram-caption">Figura 4. Diagrama de Secuencia: Flujo de solicitud de monitoria.</p>
+    </div>
+
+    <p><strong>Secuencia 3 — Calificación de Monitor</strong></p>
+    <div class="diagram-container">
+      <img src="static/img/secuencia_calificacion.png" alt="Diagrama de Secuencia: Calificación" class="diagram-img">
+      <p class="diagram-caption">Figura 5. Flujo de secuencia para el proceso de calificación de una monitoria.</p>
+    </div>
+  </section>
+
+  <!-- 6. MODELO DE NEGOCIO -->
+  <section id="negocio">
+    <div class="section-header">
+      <div class="section-number">6</div>
+      <h2 class="section-title">Modelo de Negocio — Business Model Canvas</h2>
+    </div>
+
+    <p>MonitorHub USB es una plataforma institucional sin fines de lucro. El valor generado se mide en impacto académico y reducción de deserción universitaria.</p>
+
+    <div class="bmc-grid">
+      <div class="bmc-cell accent2">
+        <h4>Socios Clave</h4>
+        <ul>
+          <li>Universidad Simón Bolívar</li>
+          <li>Microsoft (Azure AD + Teams)</li>
+          <li>Docentes supervisores</li>
+          <li>Departamento TI - USB</li>
+        </ul>
+      </div>
+      <div style="display:grid; grid-row: span 1; gap:8px;">
+        <div class="bmc-cell accent2">
+          <h4>Actividades Clave</h4>
+          <ul>
+            <li>Gestión de la plataforma</li>
+            <li>Aprobación de monitores</li>
+            <li>Matching estudiante-monitor</li>
+            <li>Seguimiento académico (Hake)</li>
+            <li>Reportes para docentes</li>
+          </ul>
+        </div>
+        <div class="bmc-cell accent2">
+          <h4>Recursos Clave</h4>
+          <ul>
+            <li>Plataforma Django + MySQL</li>
+            <li>Licencias Microsoft 365</li>
+            <li>Monitores capacitados</li>
+            <li>Servidor universitario</li>
+          </ul>
+        </div>
+      </div>
+      <div class="bmc-cell accent" style="border-top: 3px solid #e94560;">
+        <h4>Propuesta de Valor</h4>
+        <ul>
+          <li><strong>Estudiantes:</strong> Apoyo académico personalizado y mejora medible</li>
+          <li><strong>Monitores:</strong> Visibilidad y experiencia pedagógica</li>
+          <li><strong>Docentes:</strong> Seguimiento en tiempo real</li>
+          <li><strong>USB:</strong> Reducción de deserción</li>
+        </ul>
+      </div>
+      <div style="display:grid; gap:8px;">
+        <div class="bmc-cell accent3">
+          <h4>Relación con Clientes</h4>
+          <ul>
+            <li>Autoservicio digital</li>
+            <li>Comunidad con ranking público</li>
+            <li>Chat directo</li>
+            <li>Supervisión docente</li>
+          </ul>
+        </div>
+        <div class="bmc-cell accent3">
+          <h4>Canales</h4>
+          <ul>
+            <li>Plataforma web responsiva</li>
+            <li>Correo @unisimon.edu.co</li>
+            <li>Microsoft Teams</li>
+            <li>Dashboard por rol</li>
+          </ul>
+        </div>
+      </div>
+      <div class="bmc-cell accent3">
+        <h4>Segmentos de Clientes</h4>
+        <ul>
+          <li>Estudiantes USB con dificultades académicas</li>
+          <li>Monitores con alto rendimiento</li>
+          <li>Docentes supervisores</li>
+          <li>Administración universitaria</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="bmc-bottom">
+      <div class="bmc-cell accent4">
+        <h4>Estructura de Costos</h4>
+        <ul>
+          <li>Ingenieria y mantenimiento de la plataforma</li>
+          <li>Infraestructura servidor universitario</li>
+          <li>Microsoft 365 (cubierto por licencia académica)</li>
+          <li>Reconocimiento a monitores (créditos / certificados)</li>
+        </ul>
+      </div>
+      <div class="bmc-cell accent4">
+        <h4>Fuentes de Valor (no monetario)</h4>
+        <ul>
+          <li>Mejora en indicadores académicos institucionales</li>
+          <li>Reducción de la tasa de deserción universitaria</li>
+          <li>Certificación y reconocimiento para monitores</li>
+          <li>Ahorro frente a tutorías externas contratadas</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. ARQUITECTURA -->
+  <section id="arquitectura">
+    <div class="section-header">
+      <div class="section-number">7</div>
+      <h2 class="section-title">Arquitectura Técnica</h2>
+    </div>
+
+    <h3>7.1 Stack Tecnológico</h3>
+
+    <!-- Capa de Aplicación -->
+    <div class="stack-layer">
+      <div class="stack-layer-title">Capa de Aplicación</div>
+      <div class="stack-grid cols-3">
+        <div class="stack-item cat-backend">
+          <span class="tech-icon">🐍</span>
+          <div class="tech-name">Django 4.x</div>
+          <div class="tech-role">Framework Backend principal</div>
+          <span class="tech-badge badge-backend">Backend</span>
+        </div>
+        <div class="stack-item cat-realtime">
+          <span class="tech-icon">⚡</span>
+          <div class="tech-name">Django Channels</div>
+          <div class="tech-role">WebSockets / Chat en tiempo real</div>
+          <span class="tech-badge badge-realtime">Tiempo Real</span>
+        </div>
+        <div class="stack-item cat-frontend">
+          <span class="tech-icon">🎨</span>
+          <div class="tech-name">Bootstrap 5</div>
+          <div class="tech-role">UI responsiva multiplataforma</div>
+          <span class="tech-badge badge-frontend">Frontend</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Capa de Datos -->
+    <div class="stack-layer">
+      <div class="stack-layer-title">Capa de Datos</div>
+      <div class="stack-grid cols-3">
+        <div class="stack-item cat-data">
+          <span class="tech-icon">🗂️</span>
+          <div class="tech-name">SQLite</div>
+          <div class="tech-role">Base de datos local — entorno de desarrollo</div>
+          <span class="tech-badge badge-data">Desarrollo</span>
+        </div>
+        <div class="stack-item cat-data">
+          <span class="tech-icon">🗄️</span>
+          <div class="tech-name">MySQL</div>
+          <div class="tech-role">Base de datos relacional — servidor universitario</div>
+          <span class="tech-badge badge-data">Producción</span>
+        </div>
+        <div class="stack-item cat-realtime">
+          <span class="tech-icon">🔴</span>
+          <div class="tech-name">Redis</div>
+          <div class="tech-role">Channel Layer para Django Channels</div>
+          <span class="tech-badge badge-realtime">Caché</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Integración Microsoft -->
+    <div class="stack-layer">
+      <div class="stack-layer-title">Integración Microsoft 365</div>
+      <div class="stack-grid cols-2">
+        <div class="stack-item cat-integration">
+          <span class="tech-icon">☁️</span>
+          <div class="tech-name">Azure AD OAuth 2.0</div>
+          <div class="tech-role">Autenticación institucional @unisimon.edu.co</div>
+          <span class="tech-badge badge-integration">Seguridad</span>
+        </div>
+        <div class="stack-item cat-integration">
+          <span class="tech-icon">🔗</span>
+          <div class="tech-name">Microsoft Graph API</div>
+          <div class="tech-role">Teams (videollamadas) y correo institucional</div>
+          <span class="tech-badge badge-integration">Integración</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Infraestructura -->
+    <div class="stack-layer">
+      <div class="stack-layer-title">Infraestructura</div>
+      <div class="stack-grid cols-2">
+        <div class="stack-item cat-infra">
+          <span class="tech-icon">🖥️</span>
+          <div class="tech-name">Daphne</div>
+          <div class="tech-role">Servidor ASGI — HTTP y WebSocket (producción)</div>
+          <span class="tech-badge badge-infra">Servidor</span>
+        </div>
+        <div class="stack-item cat-tbd">
+          <span class="tech-icon">🔀</span>
+          <div class="tech-name">Nginx (por definir)</div>
+          <div class="tech-role">Proxy inverso — servidor universitario</div>
+          <span class="tech-badge badge-tbd">Infraestructura</span>
+        </div>
+      </div>
+    </div>
+
+    <h3>7.2 Capas de la Arquitectura</h3>
+    <div class="diagram-container">
+      <img src="static/img/componentes.png" alt="Diagrama de Componentes" class="diagram-img">
+      <p class="diagram-caption">Figura 6. Diagrama de Componentes: Arquitectura por capas del sistema.</p>
+    </div>
+
+    <h3>7.3 Estructura del Proyecto Django</h3>
+    <div class="code-block"><span class="comment"># Estructura de carpetas — MonitorHub USB</span>
+monitorhub/
+├── manage.py
+├── requirements.txt
+├── db.sqlite3                  <span class="comment"># Base de datos local (desarrollo)</span>
+├── .env                        <span class="comment"># Variables de entorno (no subir a git)</span>
+├── monitorhub/                 <span class="comment"># Configuración principal del proyecto</span>
+│   ├── settings.py
+│   ├── urls.py
+│   ├── asgi.py                 <span class="comment"># Necesario para Django Channels</span>
+│   └── wsgi.py
+├── apps/
+│   ├── usuarios/               <span class="comment"># Usuario (email-based), PerfilEstudiante, PerfilDocente</span>
+│   ├── monitores/              <span class="comment"># PerfilMonitor, Materia, DisponibilidadMonitor</span>
+│   ├── solicitudes/            <span class="comment"># SolicitudMonitoria, SolicitudTutoria</span>
+│   ├── sesiones/               <span class="comment"># Sesion, DisponibilidadDocente</span>
+│   ├── calificaciones/         <span class="comment"># Calificacion: estrellas, nota final, puntaje Hake</span>
+│   ├── mensajes/               <span class="comment"># Mensaje: buzón asíncrono por solicitud</span>
+│   └── notificaciones/         <span class="comment"># Notificacion interna; correo via Graph API (v. final)</span>
+├── templates/
+│   ├── base.html               <span class="comment"># Layout USB: header, nav, sidebar, footer</span>
+│   ├── usuarios/               <span class="comment"># login.html, dashboard_estudiante/monitor/docente/admin</span>
+│   ├── monitores/              <span class="comment"># lista.html, detalle.html</span>
+│   ├── solicitudes/            <span class="comment"># mis_solicitudes.html, nueva_tutoria.html</span>
+│   ├── mensajes/               <span class="comment"># bandeja.html</span>
+│   └── calificaciones/         <span class="comment"># calificar.html, mis_calificaciones.html</span>
+├── static/
+│   └── img/                    <span class="comment"># Logos USB, diagramas exportados de Visual Paradigm</span>
+└── docs/
+    └── guia_despliegue.md</div>
+
+    <h3>7.4 Guía de Despliegue</h3>
+
+    <p><strong>Entorno local (desarrollo — SQLite):</strong></p>
+    <div class="code-block"><span class="comment"># 1. Crear entorno virtual e instalar dependencias</span>
+python -m venv venv
+venv\Scripts\activate             <span class="comment"># Windows</span>
+pip install -r requirements.txt
+
+<span class="comment"># 2. Configurar variables mínimas en .env</span>
+SECRET_KEY=django-insecure-clave-local
+DEBUG=True
+REDIS_URL=redis://localhost:6379
+
+<span class="comment"># 3. Aplicar migraciones (SQLite, sin configuración extra)</span>
+python manage.py migrate
+
+<span class="comment"># 4. Cargar datos de prueba</span>
+python manage.py cargar_datos_prueba
+
+<span class="comment"># 5. Iniciar servidor de desarrollo</span>
+python manage.py runserver 8001
+<span class="comment"># Acceder en: http://127.0.0.1:8001/login/</span></div>
+
+    <p><strong>Servidor universitario (producción):</strong></p>
+    <table>
+      <thead>
+        <tr><th>#</th><th>Paso</th><th>Detalle</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>Instalar dependencias del sistema</td><td>Python 3.11+, MySQL, Redis, Nginx</td></tr>
+        <tr><td>2</td><td>Configurar variables de entorno</td><td>SECRET_KEY, DATABASE_URL, REDIS_URL, credenciales Azure AD</td></tr>
+        <tr><td>3</td><td>Registrar la app en Azure AD</td><td>Agregar el dominio del servidor como Redirect URI autorizado</td></tr>
+        <tr><td>4</td><td>Iniciar servidor ASGI</td><td>Daphne detrás de Nginx para soportar HTTP y WebSocket</td></tr>
+        <tr><td>5</td><td>Configurar SSL</td><td>Certificado institucional para HTTPS obligatorio (OAuth)</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+</div>
+
+<footer>
+  <strong>MonitorHub USB</strong> — Documentación Técnica del Proyecto &nbsp;|&nbsp;
+  Universidad Simón Bolívar, Cúcuta &nbsp;|&nbsp; 2026
+</footer>
+
+</body>
+</html>

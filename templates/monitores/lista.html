@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Buscar Monitoria — MonitorHub USB{% endblock %}
+
+{% block nav_tabs %}
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'usuarios:dashboard' %}">
+        <i class="bi bi-house-fill me-1"></i> Inicio
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link active" href="{% url 'monitores:lista' %}">
+        <i class="bi bi-search me-1"></i> Buscar Monitoria
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'solicitudes:lista' %}">
+        <i class="bi bi-file-earmark-text me-1"></i> Mis Monitorias
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'mensajes:bandeja' %}">
+        <i class="bi bi-chat-dots me-1"></i> Mensajes
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'calificaciones:mis_calificaciones' %}">
+        <i class="bi bi-star me-1"></i> Calificaciones
+    </a>
+</li>
+{% endblock %}
+
+{% block sidebar_links %}
+<div class="sidebar-header" style="font-size:.8rem;font-weight:600;padding:.5rem 1rem;background:#e8f5ed;color:var(--usb-green);border-bottom:1px solid #ddd;">
+    Filtrar por Materia
+</div>
+<div class="px-3 py-2">
+    <form method="get" action="{% url 'monitores:lista' %}">
+        <div class="mb-2">
+            <input type="text"
+                   name="nombre"
+                   class="form-control form-control-sm"
+                   placeholder="Nombre del monitor…"
+                   value="{{ request.GET.nombre }}">
+        </div>
+        <div class="mb-2">
+            <select name="materia" class="form-select form-select-sm">
+                <option value="">Todas las materias</option>
+                {% for mat in materias %}
+                <option value="{{ mat.pk }}"
+                    {% if request.GET.materia == mat.pk|stringformat:"s" %}selected{% endif %}>
+                    {{ mat.nombre }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <select name="modalidad" class="form-select form-select-sm">
+                <option value="">Cualquier modalidad</option>
+                <option value="PRESENCIAL" {% if request.GET.modalidad == "PRESENCIAL" %}selected{% endif %}>Presencial</option>
+                <option value="VIRTUAL"    {% if request.GET.modalidad == "VIRTUAL"    %}selected{% endif %}>Virtual</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-sm w-100" style="background:var(--usb-green);color:#fff;">
+            <i class="bi bi-search me-1"></i> Aplicar filtros
+        </button>
+        {% if request.GET.nombre or request.GET.materia or request.GET.modalidad %}
+        <a href="{% url 'monitores:lista' %}" class="btn btn-sm btn-outline-secondary w-100 mt-1">
+            <i class="bi bi-x-circle me-1"></i> Limpiar
+        </a>
+        {% endif %}
+    </form>
+</div>
+<hr class="my-1">
+<a href="{% url 'usuarios:dashboard' %}" class="nav-link">
+    <i class="bi bi-arrow-left"></i> Volver al Inicio
+</a>
+{% endblock %}
+
+{% block content %}
+
+<div class="content-card">
+    <div class="content-card-header d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-people-fill me-1"></i> Buscar Monitoria — Periodo 2026-1</span>
+        <span class="badge bg-light text-dark">{{ monitores.count }} monitor{{ monitores.count|pluralize:"es" }}</span>
+    </div>
+    <div class="content-card-body">
+        {% if monitores %}
+        <div class="row g-3">
+            {% for monitor in monitores %}
+            <div class="col-md-4">
+                <div class="monitor-card">
+                    <div class="text-center">
+                        <div class="monitor-avatar">
+                            {{ monitor.usuario.first_name|first|upper }}{{ monitor.usuario.last_name|first|upper }}
+                        </div>
+                        <div class="fw-semibold" style="font-size:.9rem;">
+                            {{ monitor.usuario.nombre_completo }}
+                        </div>
+                        {% if monitor.biografia %}
+                        <small class="text-muted d-block mt-1" style="font-size:.75rem;">
+                            {{ monitor.biografia|truncatechars:80 }}
+                        </small>
+                        {% endif %}
+                    </div>
+                    <!-- Materias -->
+                    <div class="mt-2 text-center">
+                        {% for mat in monitor.materias.all %}
+                        <span class="badge badge-materia me-1 mb-1">{{ mat.nombre }}</span>
+                        {% endfor %}
+                    </div>
+                    <!-- Stars -->
+                    <div class="text-center mt-2 stars-display">
+                        {% with s=monitor.promedio_estrellas %}
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= s %}
+                            <i class="bi bi-star-fill"></i>
+                            {% else %}
+                            <i class="bi bi-star empty"></i>
+                            {% endif %}
+                        {% endfor %}
+                        {% endwith %}
+                        <small class="text-muted ms-1">({{ monitor.promedio_estrellas|floatformat:1 }})</small>
+                    </div>
+                    <!-- Hake -->
+                    <div class="hake-bar mt-2">
+                        <div class="d-flex justify-content-between" style="font-size:.72rem;">
+                            <span class="text-muted">Ganancia Hake</span>
+                            <span class="fw-semibold">{{ monitor.promedio_hake|floatformat:2 }}</span>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar"
+                                 style="width:{% widthratio monitor.promedio_hake 1 100 %}%"
+                                 role="progressbar"></div>
+                        </div>
+                    </div>
+                    <!-- Modalidades únicas -->
+                    <div class="mt-2 text-center">
+                        {% for disp in monitor.disponibilidades.all %}
+                        <span class="badge {% if disp.modalidad == 'PRESENCIAL' %}bg-success{% else %}bg-info text-dark{% endif %} me-1" style="font-size:.7rem;">
+                            {{ disp.get_modalidad_display }}
+                        </span>
+                        {% empty %}
+                        <span class="text-muted" style="font-size:.75rem;">Sin horarios</span>
+                        {% endfor %}
+                    </div>
+                    <!-- Sesiones -->
+                    <div class="text-center mt-1">
+                        <small class="text-muted">
+                            <i class="bi bi-calendar-check me-1"></i>{{ monitor.total_sesiones }} sesiones
+                        </small>
+                    </div>
+                    <!-- Buttons -->
+                    <div class="mt-3 d-flex gap-1">
+                        <a href="{% url 'monitores:detalle' monitor.pk %}"
+                           class="btn btn-sm btn-outline-success flex-fill">
+                            <i class="bi bi-eye"></i> Ver perfil
+                        </a>
+                        <a href="{% url 'solicitudes:nueva' monitor.pk %}"
+                           class="btn btn-sm flex-fill"
+                           style="background:var(--usb-green);color:#fff;">
+                            <i class="bi bi-plus-circle"></i> Solicitar
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-5 text-muted">
+            <i class="bi bi-search" style="font-size:3rem;"></i>
+            <h5 class="mt-3">No se encontraron monitores</h5>
+            <p>Prueba con otros criterios de búsqueda.</p>
+            <a href="{% url 'monitores:lista' %}" class="btn btn-outline-success">
+                <i class="bi bi-x-circle me-1"></i> Limpiar filtros
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

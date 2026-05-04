@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Solicitar Tutoría — MonitorHub USB{% endblock %}
+
+{% block nav_tabs %}
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'usuarios:dashboard' %}">
+        <i class="bi bi-house-fill me-1"></i> Inicio
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link active" href="{% url 'solicitudes:lista' %}">
+        <i class="bi bi-file-earmark-text me-1"></i> Mis Monitorias
+    </a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'mensajes:bandeja' %}">
+        <i class="bi bi-chat-dots me-1"></i> Mensajes
+    </a>
+</li>
+{% endblock %}
+
+{% block sidebar_links %}
+<a href="{% url 'usuarios:dashboard' %}" class="nav-link">
+    <i class="bi bi-house"></i> Inicio
+</a>
+<a href="{% url 'solicitudes:lista' %}" class="nav-link active">
+    <i class="bi bi-file-earmark-check"></i> Mis Solicitudes
+</a>
+<a href="{% url 'mensajes:bandeja' %}" class="nav-link">
+    <i class="bi bi-inbox"></i> Mensajes
+</a>
+<hr class="my-2">
+<a href="{% url 'usuarios:logout' %}" class="nav-link text-danger">
+    <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+</a>
+{% endblock %}
+
+{% block content %}
+
+<div class="row g-3">
+    <!-- ── Izquierda: Perfil docente ───────────────────────────────── -->
+    <div class="col-md-4">
+        <div class="content-card" style="position:sticky;top:1rem;">
+            <div class="content-card-header">
+                <i class="bi bi-person-video3-fill me-1"></i> Docente
+            </div>
+            <div class="content-card-body text-center">
+                <div class="monitor-avatar mx-auto mb-2" style="width:68px;height:68px;font-size:1.4rem;">
+                    {{ docente.usuario.first_name|first|upper }}{{ docente.usuario.last_name|first|upper }}
+                </div>
+                <h5 class="fw-bold mb-0" style="color:var(--usb-green);">
+                    {{ docente.usuario.nombre_completo }}
+                </h5>
+                <p class="text-muted mb-2" style="font-size:.83rem;">
+                    <i class="bi bi-building me-1"></i>{{ docente.departamento }}
+                </p>
+                <p class="text-muted mb-2" style="font-size:.8rem;">
+                    <i class="bi bi-envelope me-1"></i>{{ docente.usuario.email }}
+                </p>
+                <!-- Materias -->
+                <div class="mb-3">
+                    {% for mat in docente.materias.all %}
+                    <span class="badge badge-materia me-1 mb-1">{{ mat.nombre }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Horarios disponibles -->
+            {% if disponibilidades %}
+            <div class="content-card-body border-top p-0">
+                <div class="px-3 py-2" style="font-size:.78rem;font-weight:600;color:#555;background:#f8f9fa;">
+                    <i class="bi bi-clock me-1"></i> HORARIOS DISPONIBLES
+                </div>
+                <div class="px-3 py-2">
+                    {% for disp in disponibilidades %}
+                    <div class="d-flex align-items-center gap-2 mb-2" style="font-size:.82rem;">
+                        <span class="badge
+                            {% if disp.modalidad == 'PRESENCIAL' %}bg-success
+                            {% elif disp.modalidad == 'VIRTUAL' %}bg-info text-dark
+                            {% else %}bg-secondary{% endif %}"
+                            style="font-size:.68rem;min-width:72px;">
+                            {{ disp.get_modalidad_display }}
+                        </span>
+                        <div>
+                            <div class="fw-semibold">{{ disp.get_dia_semana_display }}</div>
+                            <div class="text-muted" style="font-size:.75rem;">
+                                {{ disp.hora_inicio|time:"H:i" }} – {{ disp.hora_fin|time:"H:i" }}
+                                {% if disp.ubicacion %}· {{ disp.ubicacion }}{% endif %}
+                            </div>
+                            {% if disp.materia %}
+                            <span class="badge badge-materia" style="font-size:.65rem;">{{ disp.materia.nombre }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- ── Derecha: Formulario ─────────────────────────────────────── -->
+    <div class="col-md-8">
+        <div class="content-card">
+            <div class="content-card-header">
+                <i class="bi bi-send-fill me-1"></i> Solicitar Tutoría
+            </div>
+            <div class="content-card-body">
+                <form method="post" action="{% url 'solicitudes:nueva_tutoria' docente.pk %}">
+                    {% csrf_token %}
+
+                    <!-- Materia -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-book me-1"></i> Materia
+                        </label>
+                        <select name="materia" class="form-select" required>
+                            <option value="">Selecciona una materia…</option>
+                            {% for mat in materias %}
+                            <option value="{{ mat.pk }}">{{ mat.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">Elige la materia en la que necesitas apoyo.</div>
+                    </div>
+
+                    <!-- Notas -->
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-123 me-1"></i> Nota Inicial
+                                <small class="text-muted fw-normal">(0.0 – 5.0)</small>
+                            </label>
+                            <input type="number"
+                                   name="nota_inicial"
+                                   class="form-control"
+                                   min="0" max="5" step="0.1"
+                                   placeholder="Tu nota antes de la tutoría"
+                                   required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">
+                                <i class="bi bi-bar-chart me-1"></i> Nota Corte Actual
+                                <small class="text-muted fw-normal">(0.0 – 5.0)</small>
+                            </label>
+                            <input type="number"
+                                   name="nota_corte_actual"
+                                   class="form-control"
+                                   min="0" max="5" step="0.1"
+                                   placeholder="Tu nota en el corte actual"
+                                   required>
+                        </div>
+                    </div>
+
+                    <!-- Notas adicionales -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-chat-text me-1"></i> Notas adicionales
+                            <span class="text-muted fw-normal">(opcional)</span>
+                        </label>
+                        <textarea name="notas"
+                                  class="form-control"
+                                  rows="4"
+                                  placeholder="Describe tus dudas, los temas que necesitas repasar, o tu preferencia de horario entre los disponibles…"></textarea>
+                    </div>
+
+                    <!-- Info de notificación -->
+                    <div class="alert alert-light border mb-4 py-2" style="font-size:.82rem;">
+                        <i class="bi bi-bell me-1 text-success"></i>
+                        Al enviar, se notificará al docente <strong>{{ docente.usuario.nombre_completo }}</strong>
+                        y recibirás una confirmación en tu bandeja.
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn px-4"
+                                style="background:var(--usb-teal);color:#fff;">
+                            <i class="bi bi-send-fill me-1"></i> Enviar Solicitud de Tutoría
+                        </button>
+                        <a href="{% url 'usuarios:dashboard' %}" class="btn btn-outline-secondary">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

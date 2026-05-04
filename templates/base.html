@@ -1,0 +1,378 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MonitorHub USB{% endblock %}</title>
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons 1.11 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --usb-green:   #006633;
+            --usb-orange:  #F7941D;
+            --usb-teal:    #00AEAE;
+            --usb-footer:  #1C1C1C;
+            --usb-bg:      #F0F0F0;
+        }
+        body {
+            background: var(--usb-bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        /* ── Header ── */
+        #site-header {
+            background: #fff;
+            border-bottom: 1px solid #ddd;
+        }
+        .accent-stripe-orange { height: 4px; background: var(--usb-orange); }
+        .accent-stripe-teal   { height: 4px; background: var(--usb-teal); }
+        .header-logo { height: 56px; width: auto; }
+        .header-title {
+            font-size: .95rem;
+            font-weight: 600;
+            color: var(--usb-green);
+            line-height: 1.2;
+        }
+        .header-title span { font-size: .75rem; font-weight: 400; color: #555; }
+        .welcome-text { font-size: .8rem; color: #888; }
+        .avatar-circle {
+            width: 40px; height: 40px;
+            background: var(--usb-green);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-weight: 700; font-size: .9rem;
+            flex-shrink: 0;
+        }
+        .user-name { font-size: .85rem; font-weight: 600; text-transform: uppercase; color: #333; }
+        /* ── Nav tabs ── */
+        #main-nav {
+            background: #fff;
+            border-bottom: 2px solid #ddd;
+        }
+        #main-nav .nav-link {
+            color: #444;
+            border-radius: 0;
+            padding: .55rem 1.1rem;
+            font-size: .85rem;
+            font-weight: 500;
+            border: none;
+        }
+        #main-nav .nav-link:hover { background: #f0f0f0; }
+        #main-nav .nav-link.active {
+            background: var(--usb-green);
+            color: #fff !important;
+        }
+        /* ── Layout ── */
+        #page-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+        }
+        /* ── Sidebar ── */
+        #sidebar {
+            width: 240px;
+            min-width: 240px;
+            background: #fff;
+            border-right: 1px solid #ddd;
+            flex-shrink: 0;
+        }
+        .sidebar-header {
+            background: var(--usb-green);
+            color: #fff;
+            padding: .65rem 1rem;
+            font-size: .82rem;
+            font-weight: 700;
+            letter-spacing: .03em;
+        }
+        .sidebar-body { padding: .5rem 0; }
+        .sidebar-body .nav-link {
+            color: #333;
+            padding: .45rem 1.1rem;
+            font-size: .84rem;
+            border-radius: 0;
+        }
+        .sidebar-body .nav-link:hover { background: #f3f3f3; color: var(--usb-green); }
+        .sidebar-body .nav-link.active { color: var(--usb-green); font-weight: 600; background: #e8f5ed; }
+        .sidebar-body .nav-link i { margin-right: .4rem; }
+        /* ── Content ── */
+        #main-content { flex: 1; padding: 1.25rem; min-width: 0; }
+        .content-card { background: #fff; border: 1px solid #ddd; margin-bottom: 1.25rem; border-radius: 4px; }
+        .content-card-header {
+            background: var(--usb-green);
+            color: #fff;
+            padding: .55rem 1rem;
+            font-size: .88rem;
+            font-weight: 600;
+            border-radius: 4px 4px 0 0;
+        }
+        .content-card-body { padding: 1rem; }
+        /* ── Monitor card ── */
+        .monitor-card {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 1rem;
+            height: 100%;
+        }
+        .monitor-avatar {
+            width: 52px; height: 52px;
+            background: var(--usb-green);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-weight: 700; font-size: 1.1rem;
+            margin: 0 auto .6rem;
+        }
+        .stars-display { color: #f7941d; font-size: 1rem; }
+        .stars-display .empty { color: #ccc; }
+        .hake-bar .progress { height: 8px; }
+        .hake-bar .progress-bar { background: var(--usb-green); }
+        /* ── Footer ── */
+        footer {
+            background: var(--usb-footer);
+            color: #ccc;
+            padding: 1.5rem 0;
+            font-size: .8rem;
+        }
+        footer h6 { color: #fff; font-size: .82rem; font-weight: 700; margin-bottom: .5rem; }
+        footer a { color: #aaa; text-decoration: none; }
+        footer a:hover { color: #fff; }
+        /* ── Bell button ── */
+        #bell-btn {
+            position: fixed;
+            bottom: 1.5rem; right: 1.5rem;
+            width: 52px; height: 52px;
+            background: var(--usb-green);
+            color: #fff;
+            border-radius: 50%;
+            border: none;
+            box-shadow: 0 3px 10px rgba(0,0,0,.3);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem;
+            z-index: 1050;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        #bell-btn:hover { background: #004d26; color: #fff; }
+        #bell-btn .badge {
+            position: absolute;
+            top: 2px; right: 2px;
+            font-size: .6rem;
+            padding: 2px 5px;
+        }
+        /* ── Toast ── */
+        #toast-container {
+            position: fixed;
+            bottom: 1.5rem; left: 1.5rem;
+            z-index: 1100;
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+        }
+        .usb-toast {
+            min-width: 280px;
+            background: #fff;
+            border-left: 4px solid var(--usb-green);
+            border-radius: 4px;
+            box-shadow: 0 3px 12px rgba(0,0,0,.15);
+            padding: .75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            animation: slideIn .3s ease;
+        }
+        .usb-toast.toast-error { border-color: #dc3545; }
+        .usb-toast.toast-warning { border-color: var(--usb-orange); }
+        .usb-toast i { font-size: 1.2rem; color: var(--usb-green); flex-shrink: 0; }
+        .usb-toast.toast-error i { color: #dc3545; }
+        .usb-toast.toast-warning i { color: var(--usb-orange); }
+        .usb-toast-close {
+            margin-left: auto;
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+        /* ── Tables ── */
+        .table th { background: #f8f8f8; font-size: .82rem; }
+        .table td { font-size: .84rem; vertical-align: middle; }
+        /* ── Badges ── */
+        .badge-pendiente  { background: #ffc107; color: #333; }
+        .badge-activo     { background: #198754; color: #fff; }
+        .badge-completado { background: #0d6efd; color: #fff; }
+        .badge-cancelado  { background: #dc3545; color: #fff; }
+        .badge-materia    { background: var(--usb-green); color: #fff; font-size: .72rem; }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<!-- ══ HEADER ══════════════════════════════════════════════════════════ -->
+<header id="site-header">
+    <div class="px-3 py-2 d-flex align-items-center justify-content-between">
+        <!-- Left: logo + title -->
+        <div class="d-flex align-items-center gap-3">
+            <a href="{% url 'usuarios:dashboard' %}">
+                <img src="{% static 'img/logo_usb_login.png' %}"
+                     alt="USB"
+                     class="header-logo"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div style="display:none; align-items:center; justify-content:center;
+                            width:56px; height:56px; background:var(--usb-green);
+                            border-radius:4px; color:#fff; font-weight:900; font-size:1.1rem;">
+                    USB
+                </div>
+            </a>
+            <div>
+                <div class="header-title">
+                    SISTEMA DE MONITORIAS<br>
+                    <span>MonitorHub | Universidad Simón Bolívar</span>
+                </div>
+            </div>
+        </div>
+        <!-- Right: welcome + avatar -->
+        {% if request.user.is_authenticated %}
+        <div class="d-flex align-items-center gap-2">
+            <div class="text-end">
+                <div class="welcome-text">¡Bienvenido!</div>
+                <div class="user-name">{{ request.user.first_name }} {{ request.user.last_name }}</div>
+            </div>
+            <div class="avatar-circle">
+                {{ request.user.first_name|first|upper }}{{ request.user.last_name|first|upper }}
+            </div>
+            <a href="{% url 'usuarios:logout' %}" class="btn btn-sm btn-outline-secondary ms-2" title="Cerrar sesión">
+                <i class="bi bi-box-arrow-right"></i>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+    <!-- Accent stripes -->
+    <div class="accent-stripe-orange"></div>
+    <div class="accent-stripe-teal"></div>
+</header>
+
+<!-- ══ NAV TABS ═════════════════════════════════════════════════════════ -->
+<nav id="main-nav">
+    <div class="px-3">
+        <ul class="nav">
+            {% block nav_tabs %}{% endblock %}
+        </ul>
+    </div>
+</nav>
+
+<!-- ══ PAGE BODY ════════════════════════════════════════════════════════ -->
+<div id="page-wrapper">
+    <!-- Sidebar -->
+    <aside id="sidebar">
+        <div class="sidebar-header">
+            <i class="bi bi-list-ul me-1"></i> Opciones de Menú
+        </div>
+        <div class="sidebar-body">
+            <nav class="nav flex-column">
+                {% block sidebar_links %}{% endblock %}
+            </nav>
+        </div>
+    </aside>
+
+    <!-- Main content -->
+    <main id="main-content">
+        {% block content %}{% endblock %}
+    </main>
+</div>
+
+<!-- ══ FOOTER ═══════════════════════════════════════════════════════════ -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h6><i class="bi bi-mortarboard-fill me-1"></i> PREGRADO</h6>
+                <p class="mb-1"><i class="bi bi-telephone me-1"></i> XXXXXXXXX</p>
+                <p class="mb-0"><i class="bi bi-envelope me-1"></i> R_MEZA@unisimon.edu.co</p>
+            </div>
+            <div class="col-md-4">
+                <h6><i class="bi bi-book-fill me-1"></i> POSGRADO</h6>
+                <p class="mb-1"><i class="bi bi-telephone me-1"></i> XXXXXXXXX</p>
+                <p class="mb-0"><i class="bi bi-envelope me-1"></i> R_MEZA@unisimon.edu.co</p>
+            </div>
+            <div class="col-md-4">
+                <h6><i class="bi bi-info-circle-fill me-1"></i> MONITORHUB</h6>
+                <p class="mb-1">Sistema de Información de Monitorias v.1, Proyecto Integrador </p>
+                <p class="mb-0">&copy; 2026 — Ingenieria de Software - Universidad Simón Bolívar</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+<!-- ══ FIXED BELL BUTTON ════════════════════════════════════════════════ -->
+<a href="#" id="bell-btn" title="Notificaciones">
+    <i class="bi bi-bell-fill"></i>
+    {% if notif_count and notif_count > 0 %}
+    <span class="badge bg-danger rounded-pill">{{ notif_count }}</span>
+    {% endif %}
+</a>
+
+<!-- ══ TOAST CONTAINER ══════════════════════════════════════════════════ -->
+<div id="toast-container"></div>
+
+<!-- Auto-show Django messages as toasts -->
+{% for message in messages %}
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    var levelMap = {
+        'success': 'bi-check-circle',
+        'error':   'bi-x-circle',
+        'warning': 'bi-exclamation-triangle',
+        'info':    'bi-info-circle',
+        'debug':   'bi-bug'
+    };
+    var typeMap = {
+        'error':   'toast-error',
+        'warning': 'toast-warning'
+    };
+    showToast(
+        "{{ message|escapejs }}",
+        levelMap["{{ message.tags }}"] || "bi-check-circle",
+        typeMap["{{ message.tags }}"] || ""
+    );
+});
+</script>
+{% endfor %}
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+/**
+ * showToast(message, iconClass, extraClass)
+ * Displays a toast notification in the bottom-left container.
+ */
+function showToast(message, iconClass, extraClass) {
+    iconClass  = iconClass  || 'bi-check-circle';
+    extraClass = extraClass || '';
+    var container = document.getElementById('toast-container');
+    var toast = document.createElement('div');
+    toast.className = 'usb-toast ' + extraClass;
+    toast.innerHTML =
+        '<i class="bi ' + iconClass + '"></i>' +
+        '<span>' + message + '</span>' +
+        '<button class="usb-toast-close" onclick="this.parentElement.remove()">&#x2715;</button>';
+    container.appendChild(toast);
+    setTimeout(function(){ if(toast.parentElement) toast.remove(); }, 5000);
+}
+</script>
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>
