@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 import environ
+import dj_database_url
 
 # Initialize environment variables
 env = environ.Env(
@@ -92,13 +93,23 @@ ASGI_APPLICATION = 'monitorhub.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-# Si existe DATABASE_URL (Vercel/Neon) la usa; si no, cae a SQLite local
+# Si existe DATABASE_URL (Vercel/Neon) usa PostgreSQL; si no, cae a SQLite local
 
-DATABASES = {
-    'default': env.db(
-        'DATABASE_URL',
-        default=f'sqlite:///{BASE_DIR}/db.sqlite3'
-    )
+_database_url = env('DATABASE_URL', default=None)
+if _database_url:
+    DATABASES = {
+        'default': dj_database_url.parse(
+            _database_url,
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
 }
 
 
