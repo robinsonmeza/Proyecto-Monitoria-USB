@@ -4,7 +4,6 @@ django-environ           # Manejo de variables de entorno (.env)
 
 # ── Base de datos ───────────────────────────────────────────────────────────
 psycopg2-binary          # Driver PostgreSQL (wheel precompilado — compatible Vercel/Neon)
-dj-database-url          # Parsea DATABASE_URL para Django (soporta Neon/PostgreSQL)
 # sqlite3 incluido en Python stdlib (desarrollo local)
 
 # ── Tiempo real (WebSocket / Chat) ──────────────────────────────────────────

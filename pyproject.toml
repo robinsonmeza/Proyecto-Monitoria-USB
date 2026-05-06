@@ -6,7 +6,6 @@ dependencies = [
     "django>=4.2,<5.0",
     "django-environ",
     "psycopg2-binary",
-    "dj-database-url",
     "channels",
     "channels-redis",
     "redis",

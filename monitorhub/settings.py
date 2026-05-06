@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
+from urllib.parse import urlparse
 import environ
-import dj_database_url
 
 # Initialize environment variables
 env = environ.Env(
@@ -95,12 +95,28 @@ ASGI_APPLICATION = 'monitorhub.asgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 # Si existe DATABASE_URL (Vercel/Neon) usa PostgreSQL; si no, cae a SQLite local
 
-DATABASES = {
-    'default': dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=600,
-    )
-}
+_db_url = os.environ.get('DATABASE_URL', '')
+if _db_url:
+    _p = urlparse(_db_url)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': _p.path.lstrip('/').split('?')[0],
+            'USER': _p.username or '',
+            'PASSWORD': _p.password or '',
+            'HOST': _p.hostname or '',
+            'PORT': str(_p.port or 5432),
+            'OPTIONS': {'sslmode': 'require'},
+            'CONN_MAX_AGE': 600,
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
