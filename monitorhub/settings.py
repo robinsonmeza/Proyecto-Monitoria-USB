@@ -4,14 +4,15 @@ import environ
 
 # Initialize environment variables
 env = environ.Env(
-    DEBUG=(bool, False)
+    DEBUG=(bool, False),
+    ALLOWED_HOSTS=(list, ['localhost', '127.0.0.1']),
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Read .env file
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+# Read .env file (solo en desarrollo local; en Vercel las vars se configuran en el dashboard)
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'), overwrite=False)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -22,7 +23,15 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = []
+# Hosts permitidos: en Vercel se configura via variable de entorno ALLOWED_HOSTS
+# Ejemplo: ALLOWED_HOSTS=proyecto-monitoria-usb.vercel.app,.vercel.app
+ALLOWED_HOSTS = env('ALLOWED_HOSTS')
+
+# Orígenes de confianza para CSRF (requerido para formularios en HTTPS)
+CSRF_TRUSTED_ORIGINS = env.list(
+    'CSRF_TRUSTED_ORIGINS',
+    default=['https://*.vercel.app', 'http://localhost:8001', 'http://127.0.0.1:8001']
+)
 
 
 # Application definition
