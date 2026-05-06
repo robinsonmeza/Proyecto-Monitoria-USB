@@ -1,6 +1,6 @@
 # MonitorHub USB
 
-Plataforma web para la gestión integral de monitorias académicas y tutorías docentes en la Universidad Simón Bolívar — Barranquilla. Desarrollada como proyecto integrador de **Ingeniería de Software** bajo la dirección de la Ing. María Carlota Bernal.
+Plataforma web para la gestión integral de monitorias académicas y tutorías docentes en la Universidad Simón Bolívar — Cúcuta. Desarrollada como proyecto integrador de **Ingeniería de Software** bajo la dirección de la Ing. María Carlota Bernal.
 
 ---
 
@@ -113,7 +113,7 @@ Accede en: `http://127.0.0.1:8001/login/`
 | `r_meza@unisimon.edu.co` | `Will2927` | Administrador |
 | `c_perez@unisimon.edu.co` | `estudiante123` | Estudiante |
 | `p_martinez@unisimon.edu.co` | `monitor123` | Monitor |
-| `r_rodriguez@unisimon.edu.co` | `docente123` | Docente |
+| `m_bernal@unisimon.edu.co` | `MaryBernal123` | Docente |
 
 ---
 
@@ -147,5 +147,5 @@ Diagramas UML (Casos de Uso, Clases, Secuencia), Business Model Canvas y arquite
 
 ## Licencia
 
-Proyecto académico desarrollado para la **Universidad Simón Bolívar — Barranquilla**.  
+Proyecto académico desarrollado para la materia Ingenieria de Software en la Universidad Simón Bolívar — Cúcuta.  
 © 2026 — Todos los derechos reservados.
