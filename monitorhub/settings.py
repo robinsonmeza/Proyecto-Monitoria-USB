@@ -92,14 +92,13 @@ ASGI_APPLICATION = 'monitorhub.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+# Si existe DATABASE_URL (Vercel/Neon) la usa; si no, cae a SQLite local
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-    # MySQL (producción) — descomentar cuando esté listo el servidor universitario
-    # 'default': env.db('DATABASE_URL')
+    'default': env.db(
+        'DATABASE_URL',
+        default=f'sqlite:///{BASE_DIR}/db.sqlite3'
+    )
 }
 
 

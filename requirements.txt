@@ -3,7 +3,7 @@ Django>=4.2,<5.0
 django-environ           # Manejo de variables de entorno (.env)
 
 # ── Base de datos ───────────────────────────────────────────────────────────
-PyMySQL                  # Driver MySQL puro Python (sin librerías nativas — compatible Vercel)
+psycopg2-binary          # Driver PostgreSQL (wheel precompilado — compatible Vercel/Neon)
 # sqlite3 incluido en Python stdlib (desarrollo local)
 
 # ── Tiempo real (WebSocket / Chat) ──────────────────────────────────────────

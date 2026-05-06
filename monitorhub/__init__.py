@@ -1,4 +1,7 @@
-import pymysql
-
-# Registra PyMySQL como sustituto de mysqlclient (necesario para producción con MySQL)
-pymysql.install_as_MySQLdb()
+# PyMySQL como fallback para MySQL en producción universitaria
+# No se usa en Vercel/Neon (PostgreSQL)
+try:
+    import pymysql
+    pymysql.install_as_MySQLdb()
+except ImportError:
+    pass

@@ -5,7 +5,7 @@ requires-python = ">=3.11"
 dependencies = [
     "django>=4.2,<5.0",
     "django-environ",
-    "PyMySQL",
+    "psycopg2-binary",
     "channels",
     "channels-redis",
     "redis",
