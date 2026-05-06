@@ -3,7 +3,7 @@ Django>=4.2,<5.0
 django-environ           # Manejo de variables de entorno (.env)
 
 # ── Base de datos ───────────────────────────────────────────────────────────
-mysqlclient              # Driver MySQL (producción — servidor universitario)
+PyMySQL                  # Driver MySQL puro Python (sin librerías nativas — compatible Vercel)
 # sqlite3 incluido en Python stdlib (desarrollo local)
 
 # ── Tiempo real (WebSocket / Chat) ──────────────────────────────────────────
