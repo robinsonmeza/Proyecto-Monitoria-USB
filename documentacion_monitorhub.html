@@ -1092,10 +1092,10 @@
         <div class="bmc-cell accent2">
           <h4>Recursos Clave</h4>
           <ul>
-            <li>Plataforma Django + MySQL</li>
+            <li>Plataforma Django + PostgreSQL (Neon)</li>
+            <li>Deploy Vercel (demo) / Servidor USB (producción)</li>
             <li>Licencias Microsoft 365</li>
             <li>Monitores capacitados</li>
-            <li>Servidor universitario</li>
           </ul>
         </div>
       </div>
@@ -1198,18 +1198,24 @@
     <!-- Capa de Datos -->
     <div class="stack-layer">
       <div class="stack-layer-title">Capa de Datos</div>
-      <div class="stack-grid cols-3">
+      <div class="stack-grid cols-4">
         <div class="stack-item cat-data">
           <span class="tech-icon">🗂️</span>
           <div class="tech-name">SQLite</div>
-          <div class="tech-role">Base de datos local — entorno de desarrollo</div>
+          <div class="tech-role">Base de datos local — desarrollo</div>
           <span class="tech-badge badge-data">Desarrollo</span>
+        </div>
+        <div class="stack-item cat-data">
+          <span class="tech-icon">🐘</span>
+          <div class="tech-name">PostgreSQL — Neon</div>
+          <div class="tech-role">BD serverless — deploy Vercel (free tier)</div>
+          <span class="tech-badge badge-data">Vercel</span>
         </div>
         <div class="stack-item cat-data">
           <span class="tech-icon">🗄️</span>
           <div class="tech-name">MySQL</div>
-          <div class="tech-role">Base de datos relacional — servidor universitario</div>
-          <span class="tech-badge badge-data">Producción</span>
+          <div class="tech-role">BD relacional — servidor universitario</div>
+          <span class="tech-badge badge-data">Producción USB</span>
         </div>
         <div class="stack-item cat-realtime">
           <span class="tech-icon">🔴</span>
@@ -1242,16 +1248,22 @@
     <!-- Infraestructura -->
     <div class="stack-layer">
       <div class="stack-layer-title">Infraestructura</div>
-      <div class="stack-grid cols-2">
+      <div class="stack-grid cols-3">
+        <div class="stack-item cat-infra">
+          <span class="tech-icon">▲</span>
+          <div class="tech-name">Vercel</div>
+          <div class="tech-role">Deploy serverless — demo y presentación</div>
+          <span class="tech-badge badge-infra">Cloud</span>
+        </div>
         <div class="stack-item cat-infra">
           <span class="tech-icon">🖥️</span>
           <div class="tech-name">Daphne</div>
-          <div class="tech-role">Servidor ASGI — HTTP y WebSocket (producción)</div>
+          <div class="tech-role">Servidor ASGI — HTTP y WebSocket (producción USB)</div>
           <span class="tech-badge badge-infra">Servidor</span>
         </div>
         <div class="stack-item cat-tbd">
           <span class="tech-icon">🔀</span>
-          <div class="tech-name">Nginx (por definir)</div>
+          <div class="tech-name">Nginx</div>
           <div class="tech-role">Proxy inverso — servidor universitario</div>
           <span class="tech-badge badge-tbd">Infraestructura</span>
         </div>
@@ -1268,11 +1280,14 @@
     <div class="code-block"><span class="comment"># Estructura de carpetas — MonitorHub USB</span>
 monitorhub/
 ├── manage.py
-├── requirements.txt
-├── db.sqlite3                  <span class="comment"># Base de datos local (desarrollo)</span>
+├── requirements.txt            <span class="comment"># Dependencias pip (psycopg2-binary, channels, etc.)</span>
+├── pyproject.toml              <span class="comment"># Definición del proyecto — uv/Vercel lo usa para resolver deps</span>
+├── uv.lock                     <span class="comment"># Lock de dependencias — Vercel usa uv sync --locked</span>
+├── db.sqlite3                  <span class="comment"># Base de datos local (desarrollo, no subir a git)</span>
 ├── .env                        <span class="comment"># Variables de entorno (no subir a git)</span>
 ├── monitorhub/                 <span class="comment"># Configuración principal del proyecto</span>
-│   ├── settings.py
+│   ├── __init__.py             <span class="comment"># pymysql.install_as_MySQLdb() (fallback MySQL)</span>
+│   ├── settings.py             <span class="comment"># DATABASES via DATABASE_URL (Neon/MySQL/SQLite según entorno)</span>
 │   ├── urls.py
 │   ├── asgi.py                 <span class="comment"># Necesario para Django Channels</span>
 │   └── wsgi.py
@@ -1291,10 +1306,8 @@ monitorhub/
 │   ├── solicitudes/            <span class="comment"># mis_solicitudes.html, nueva_tutoria.html</span>
 │   ├── mensajes/               <span class="comment"># bandeja.html</span>
 │   └── calificaciones/         <span class="comment"># calificar.html, mis_calificaciones.html</span>
-├── static/
-│   └── img/                    <span class="comment"># Logos USB, diagramas exportados de Visual Paradigm</span>
-└── docs/
-    └── guia_despliegue.md</div>
+└── static/
+    └── img/                    <span class="comment"># Logos USB (emblema + horizontal), diagramas VP</span></div>
 
     <h3>7.4 Guía de Despliegue</h3>
 
@@ -1319,6 +1332,41 @@ python manage.py cargar_datos_prueba
 python manage.py runserver 8001
 <span class="comment"># Acceder en: http://127.0.0.1:8001/login/</span></div>
 
+    <p><strong>Deploy en Vercel + Neon (demo/presentación):</strong></p>
+    <div class="code-block"><span class="comment"># 1. Instalar Vercel CLI</span>
+npm install -g vercel
+
+<span class="comment"># 2. Autenticarse y vincular el proyecto</span>
+vercel login
+vercel link --project proyecto-monitoria-usb
+
+<span class="comment"># 3. Configurar variables de entorno en Vercel</span>
+echo "postgresql://usuario:pass@host/db?sslmode=require" | vercel env add DATABASE_URL production --yes
+echo "False" | vercel env add DEBUG production --yes
+echo "proyecto-monitoria-usb.vercel.app,.vercel.app" | vercel env add ALLOWED_HOSTS production --yes
+
+<span class="comment"># 4. Correr migraciones contra Neon (una sola vez, desde local)</span>
+DATABASE_URL=postgresql://... python manage.py migrate
+DATABASE_URL=postgresql://... python manage.py cargar_datos_prueba
+
+<span class="comment"># 5. Deploy a producción</span>
+vercel --prod</div>
+
+    <table>
+      <thead>
+        <tr><th>Variable</th><th>Entorno</th><th>Descripción</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>SECRET_KEY</code></td><td>Vercel + USB</td><td>Clave secreta Django — larga y aleatoria</td></tr>
+        <tr><td><code>DEBUG</code></td><td>Vercel + USB</td><td><code>False</code> en producción</td></tr>
+        <tr><td><code>DATABASE_URL</code></td><td>Vercel</td><td>URL Neon: <code>postgresql://...?sslmode=require</code></td></tr>
+        <tr><td><code>DATABASE_URL</code></td><td>USB</td><td>URL MySQL: <code>mysql://usuario:pass@host/monitorhub</code></td></tr>
+        <tr><td><code>ALLOWED_HOSTS</code></td><td>Vercel</td><td>Dominios Vercel separados por coma</td></tr>
+        <tr><td><code>REDIS_URL</code></td><td>USB</td><td><code>redis://localhost:6379</code></td></tr>
+        <tr><td><code>AZURE_CLIENT_ID</code></td><td>USB (v. final)</td><td>App registrada en Azure AD</td></tr>
+      </tbody>
+    </table>
+
     <p><strong>Servidor universitario (producción):</strong></p>
     <table>
       <thead>
@@ -1326,7 +1374,7 @@ python manage.py runserver 8001
       </thead>
       <tbody>
         <tr><td>1</td><td>Instalar dependencias del sistema</td><td>Python 3.11+, MySQL, Redis, Nginx</td></tr>
-        <tr><td>2</td><td>Configurar variables de entorno</td><td>SECRET_KEY, DATABASE_URL, REDIS_URL, credenciales Azure AD</td></tr>
+        <tr><td>2</td><td>Configurar variables de entorno</td><td>SECRET_KEY, DATABASE_URL (MySQL), REDIS_URL, credenciales Azure AD</td></tr>
         <tr><td>3</td><td>Registrar la app en Azure AD</td><td>Agregar el dominio del servidor como Redirect URI autorizado</td></tr>
         <tr><td>4</td><td>Iniciar servidor ASGI</td><td>Daphne detrás de Nginx para soportar HTTP y WebSocket</td></tr>
         <tr><td>5</td><td>Configurar SSL</td><td>Certificado institucional para HTTPS obligatorio (OAuth)</td></tr>

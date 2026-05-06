@@ -2,6 +2,8 @@
 
 Plataforma web para la gestión integral de monitorias académicas y tutorías docentes en la Universidad Simón Bolívar — Cúcuta. Desarrollada como proyecto integrador de **Ingeniería de Software** bajo la dirección de la Ing. María Carlota Bernal.
 
+🔗 **Demo en vivo:** [proyecto-monitoria-usb.vercel.app](https://proyecto-monitoria-usb.vercel.app)
+
 ---
 
 ## Características Principales
@@ -35,8 +37,11 @@ Plataforma web para la gestión integral de monitorias académicas y tutorías d
 |------|-----------|
 | Backend | Django 4.2+ |
 | Frontend | Bootstrap 5.3 + Bootstrap Icons |
-| Base de datos | SQLite (desarrollo) / MySQL (producción) |
+| Base de datos (desarrollo) | SQLite |
+| Base de datos (Vercel) | PostgreSQL — Neon (serverless, free tier) |
+| Base de datos (producción USB) | MySQL — servidor universitario |
 | Tiempo real | Django Channels + Redis + Daphne (ASGI) |
+| Deploy | Vercel (serverless) |
 | Auth (producción) | Microsoft OAuth 2.0 — Azure AD |
 | Integraciones | Microsoft Graph API (Teams, correo) |
 
@@ -64,6 +69,8 @@ monitorhub/
 │   └── calificaciones/  # calificar, mis_calificaciones
 ├── static/
 │   └── img/             # Logos USB, diagramas VP
+├── pyproject.toml       # Definición del proyecto para uv/Vercel
+├── uv.lock              # Lock de dependencias (Vercel lo usa con uv sync --locked)
 ├── requirements.txt
 └── .env                 # No incluir en git
 ```
@@ -92,7 +99,7 @@ SECRET_KEY=django-insecure-clave-local
 DEBUG=True
 REDIS_URL=redis://localhost:6379
 
-# 4. Aplicar migraciones
+# 4. Aplicar migraciones (SQLite local — no requiere configuración extra)
 python manage.py migrate
 
 # 5. Cargar datos de prueba
@@ -110,10 +117,10 @@ Accede en: `http://127.0.0.1:8001/login/`
 
 | Correo | Contraseña | Rol |
 |--------|-----------|-----|
-| `r_meza@unisimon.edu.co` | `Will2927` | Administrador |
+| `admin@unisimon.edu.co` | `admin123` | Administrador |
 | `c_perez@unisimon.edu.co` | `estudiante123` | Estudiante |
 | `p_martinez@unisimon.edu.co` | `monitor123` | Monitor |
-| `m_bernal@unisimon.edu.co` | `MaryBernal123` | Docente |
+| `r_rodriguez@unisimon.edu.co` | `docente123` | Docente |
 
 ---
 
@@ -123,8 +130,9 @@ Accede en: `http://127.0.0.1:8001/login/`
 SECRET_KEY=tu_secret_key_aqui
 DEBUG=True
 
-# Base de datos — descomentar para producción MySQL
-# DATABASE_URL=mysql://usuario:password@localhost/monitorhub
+# Base de datos — dejar vacío para usar SQLite en desarrollo
+# DATABASE_URL=postgresql://usuario:password@host/db?sslmode=require  # Neon
+# DATABASE_URL=mysql://usuario:password@localhost/monitorhub           # MySQL (producción USB)
 
 # Redis — requerido para Django Channels
 REDIS_URL=redis://localhost:6379
@@ -133,6 +141,41 @@ REDIS_URL=redis://localhost:6379
 AZURE_CLIENT_ID=tu_client_id
 AZURE_CLIENT_SECRET=tu_client_secret
 AZURE_TENANT_ID=tu_tenant_id
+```
+
+---
+
+## Deploy en Vercel
+
+El proyecto está configurado para desplegarse en Vercel con base de datos [Neon](https://neon.tech) (PostgreSQL serverless, free tier).
+
+### Variables de entorno requeridas en Vercel
+
+| Variable | Descripción |
+|----------|-------------|
+| `SECRET_KEY` | Clave secreta Django (larga y aleatoria) |
+| `DEBUG` | `False` en producción |
+| `DATABASE_URL` | URL de conexión Neon (`postgresql://...?sslmode=require`) |
+| `ALLOWED_HOSTS` | Dominios permitidos (ej: `proyecto-monitoria-usb.vercel.app,.vercel.app`) |
+
+### Primer deploy
+
+```bash
+# 1. Instalar Vercel CLI
+npm install -g vercel
+
+# 2. Autenticarse
+vercel login
+
+# 3. Vincular proyecto existente
+vercel link --project proyecto-monitoria-usb
+
+# 4. Correr migraciones contra Neon (una sola vez)
+DATABASE_URL=postgresql://... python manage.py migrate
+DATABASE_URL=postgresql://... python manage.py cargar_datos_prueba
+
+# 5. Deploy a producción
+vercel --prod
 ```
 
 ---
