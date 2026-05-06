@@ -95,21 +95,11 @@ ASGI_APPLICATION = 'monitorhub.asgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 # Si existe DATABASE_URL (Vercel/Neon) usa PostgreSQL; si no, cae a SQLite local
 
-_database_url = env('DATABASE_URL', default=None)
-if _database_url:
-    DATABASES = {
-        'default': dj_database_url.parse(
-            _database_url,
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
-    }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+DATABASES = {
+    'default': dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+    )
 }
 
 
