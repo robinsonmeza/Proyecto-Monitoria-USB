@@ -1027,14 +1027,249 @@
     <h3 id="casos-uso">5.1 Diagrama de Casos de Uso</h3>
     <p>Representa los actores del sistema y las funcionalidades disponibles para cada uno, junto con sus relaciones de inclusión y extensión.</p>
     <div class="diagram-container">
-      <img src="static/img/casos_uso.png" alt="Diagrama de Casos de Uso" class="diagram-img">
+      <div class="mermaid">
+graph LR
+  E["👤 Estudiante"]
+  M["👤 Monitor"]
+  D["👤 Docente"]
+  ADM["👤 Administrador"]
+  MS["⚙️ Microsoft OAuth"]
+  TEAMS["⚙️ Microsoft Teams"]
+  CORREO["⚙️ Correo Institucional"]
+
+  subgraph AUTH["Autenticación"]
+    AU1("Iniciar sesión\ncuenta institucional")
+    AU2("Verificar dominio\n@unisimon.edu.co")
+  end
+
+  subgraph ADMIN_UC["Administración"]
+    A1("Gestionar usuarios")
+    A2("Ver reportes generales")
+    A3("Aprobar perfil de monitor")
+    A4("Crear datos de prueba")
+  end
+
+  subgraph DOC_UC["Supervisión Docente"]
+    D1("Ver info de estudiantes")
+    D2("Supervisar sesiones de monitores")
+    D3("Ver comentarios privados")
+  end
+
+  subgraph TUT_UC["Tutorías con Docente"]
+    T1("Publicar disponibilidad de tutoría")
+    T2("Ver solicitudes de tutoría")
+  end
+
+  subgraph BUS_UC["Búsqueda y Solicitud"]
+    B1("Buscar monitor")
+    B2("Solicitar monitoria")
+    B3("Ver disponibilidad del monitor")
+    B4("Ver docentes disponibles")
+    B5("Solicitar tutoría a docente")
+  end
+
+  subgraph SES_UC["Sesiones"]
+    S1("Publicar disponibilidad\nde monitoria")
+    S2("Agendar sesión presencial")
+    S3("Iniciar videollamada\nvía Teams")
+  end
+
+  subgraph CAL_UC["Calificación"]
+    C1("Calificar monitor\n1-5 estrellas")
+    C2("Registrar nota inicial y final")
+    C3("Calcular tasa de éxito Hake")
+  end
+
+  subgraph COM_UC["Comunicación"]
+    CM1("Enviar mensaje\nbuzón asíncrono")
+    CM2("Chat en tiempo real")
+  end
+
+  E --> AU1
+  E --> B1
+  E --> B2
+  E --> B4
+  E --> B5
+  E --> C1
+  E --> C2
+  E --> CM1
+  E --> CM2
+
+  M --> AU1
+  M --> S1
+  M --> S2
+  M --> CM1
+  M --> B2
+
+  D --> AU1
+  D --> D1
+  D --> D2
+  D --> D3
+  D --> T1
+  D --> T2
+
+  ADM --> AU1
+  ADM --> A1
+  ADM --> A2
+  ADM --> A3
+  ADM --> A4
+
+  AU1 -.->|include| AU2
+  B2 -.->|include| B3
+  C2 -.->|include| C3
+  S2 -.->|extend| S3
+  AU2 --> MS
+  S3 --> TEAMS
+  B2 -.->|include| CORREO
+      </div>
       <p class="diagram-caption">Figura 1. Diagrama de Casos de Uso del sistema MonitorHub USB.</p>
     </div>
 
     <h3 id="clases">5.2 Diagrama de Clases</h3>
     <p>Muestra las entidades del sistema, sus atributos, métodos y las relaciones entre ellas (asociación, composición, herencia).</p>
     <div class="diagram-container">
-      <img src="static/img/clases.png" alt="Diagrama de Clases" class="diagram-img">
+      <div class="mermaid">
+classDiagram
+  direction TB
+
+  class Usuario {
+    +id: int
+    +correo: str
+    +nombre: str
+    +apellido: str
+    +id_microsoft: str
+    +rol: Rol
+    +activo: bool
+    +fecha_creacion: datetime
+  }
+
+  class PerfilEstudiante {
+    +id: int
+    +codigo_estudiante: str
+    +programa: str
+    +semestre: int
+  }
+
+  class PerfilMonitor {
+    +id: int
+    +biografia: str
+    +aprobado: bool
+    +fecha_aprobacion: datetime
+    +promedio_estrellas: float
+    +promedio_hake: float
+    +total_sesiones: int
+    +calcularRanking() float
+  }
+
+  class PerfilDocente {
+    +id: int
+    +departamento: str
+  }
+
+  class Materia {
+    +id: int
+    +codigo: str
+    +nombre: str
+    +departamento: str
+  }
+
+  class DisponibilidadMonitor {
+    +id: int
+    +dia_semana: DiaSemana
+    +hora_inicio: time
+    +hora_fin: time
+    +modalidad: Modalidad
+    +ubicacion: str
+    +activo: bool
+  }
+
+  class DisponibilidadDocente {
+    +id: int
+    +dia_semana: DiaSemana
+    +hora_inicio: time
+    +hora_fin: time
+    +modalidad: Modalidad
+    +ubicacion: str
+    +activo: bool
+  }
+
+  class SolicitudMonitoria {
+    +id: int
+    +nota_inicial: float
+    +nota_corte_actual: float
+    +estado: EstadoSolicitud
+    +fecha_creacion: datetime
+    +notas: str
+  }
+
+  class SolicitudTutoria {
+    +id: int
+    +nota_inicial: float
+    +nota_corte_actual: float
+    +estado: EstadoSolicitud
+    +fecha_creacion: datetime
+    +notas: str
+  }
+
+  class Sesion {
+    +id: int
+    +fecha_hora: datetime
+    +duracion_minutos: int
+    +modalidad: Modalidad
+    +url_teams: str
+    +ubicacion: str
+    +estado: EstadoSesion
+  }
+
+  class Calificacion {
+    +id: int
+    +estrellas: int
+    +nota_final: float
+    +comentario_privado: str
+    +puntaje_hake: float
+    +fecha_creacion: datetime
+    +calcularHake() float
+  }
+
+  class Mensaje {
+    +id: int
+    +contenido: str
+    +fecha_envio: datetime
+    +fecha_lectura: datetime
+    +es_tiempo_real: bool
+  }
+
+  class Notificacion {
+    +id: int
+    +tipo: str
+    +mensaje: str
+    +fecha_envio: datetime
+    +enviado_por_correo: bool
+  }
+
+  Usuario "1" --> "0..1" PerfilEstudiante : vinculado a
+  Usuario "1" --> "0..1" PerfilMonitor : vinculado a
+  Usuario "1" --> "0..1" PerfilDocente : vinculado a
+
+  PerfilMonitor "1" --> "*" DisponibilidadMonitor : publica
+  PerfilMonitor "*" --> "*" Materia : enseña
+  PerfilDocente "1" --> "*" DisponibilidadDocente : publica
+  DisponibilidadDocente "*" --> "0..1" Materia
+
+  SolicitudMonitoria "*" --> "1" PerfilEstudiante : estudiante
+  SolicitudMonitoria "*" --> "1" PerfilMonitor : monitor
+  SolicitudMonitoria "*" --> "1" Materia
+  SolicitudMonitoria "1" --> "*" Sesion
+  SolicitudMonitoria "1" --> "*" Calificacion
+  SolicitudMonitoria "1" --> "*" Mensaje
+
+  SolicitudTutoria "*" --> "1" PerfilEstudiante : estudiante
+  SolicitudTutoria "*" --> "1" PerfilDocente : docente
+  SolicitudTutoria "*" --> "1" Materia
+
+  Notificacion "*" --> "1" Usuario : destinatario
+  Mensaje "*" --> "1" Usuario : remitente
+      </div>
       <p class="diagram-caption">Figura 2. Diagrama de Clases: Entidades y relaciones del dominio.</p>
     </div>
 
@@ -1042,20 +1277,93 @@
 
     <p><strong>Secuencia 1 — Autenticación con Microsoft OAuth</strong></p>
     <div class="diagram-container">
-      <img src="static/img/secuencia_auth.png" alt="Diagrama de Secuencia: Autenticación" class="diagram-img">
+      <div class="mermaid">
+sequenceDiagram
+  actor U as Usuario
+  participant App as Aplicación MonitorHub
+  participant AAD as Azure AD (OAuth 2.0)
+  participant BD as Base de Datos
+
+  U->>App: Clic "Iniciar sesión con Microsoft"
+  App->>AAD: Redirigir a flujo OAuth 2.0
+  AAD->>U: Mostrar pantalla de login Microsoft
+  U->>AAD: Introducir credenciales @unisimon.edu.co
+  AAD->>AAD: Verificar dominio @unisimon.edu.co
+  alt Dominio no autorizado
+    AAD-->>U: Acceso denegado
+  else Dominio válido
+    AAD-->>App: Token de acceso + info del usuario
+    App->>BD: Buscar/crear Usuario por correo
+    BD-->>App: Usuario (con rol asignado)
+    App-->>U: Redirigir al Dashboard según rol
+  end
+      </div>
       <p class="diagram-caption">Figura 3. Diagrama de Secuencia: Flujo de autenticación con Microsoft OAuth.</p>
     </div>
 
     <p><strong>Secuencia 2 — Solicitud de Monitoria</strong></p>
     <div class="diagram-container">
-      <img src="static/img/secuencia_solicitud.png" alt="Diagrama de Secuencia: Solicitud" class="diagram-img">
+      <div class="mermaid">
+sequenceDiagram
+  actor E as Estudiante
+  participant App as Aplicación MonitorHub
+  participant BD as Base de Datos
+  actor M as Monitor
+  actor D as Docente
+
+  E->>App: Acceder a "Buscar Monitoria"
+  App->>BD: Consultar monitores activos con disponibilidad
+  BD-->>App: Lista de monitores + materias + ranking
+  App-->>E: Mostrar listado con filtros (nombre, materia)
+
+  E->>App: Seleccionar monitor y ver detalle
+  App->>BD: Consultar disponibilidad del monitor
+  BD-->>App: Horarios disponibles
+  App-->>E: Mostrar perfil + slots de disponibilidad
+
+  E->>App: Completar formulario de solicitud
+  Note over E,App: materia, nota_inicial, nota_corte_actual, docente
+  App->>BD: Crear SolicitudMonitoria (estado: PENDIENTE)
+  App->>BD: Crear Notificacion para Monitor y Docente
+  BD-->>App: Confirmación
+  App-->>E: Confirmar solicitud registrada
+  App-->>M: Notificación nueva solicitud recibida
+  App-->>D: Notificación solicitud en su materia
+      </div>
       <p class="diagram-caption">Figura 4. Diagrama de Secuencia: Flujo de solicitud de monitoria.</p>
     </div>
 
     <p><strong>Secuencia 3 — Calificación de Monitor</strong></p>
     <div class="diagram-container">
-      <img src="static/img/secuencia_calificacion.png" alt="Diagrama de Secuencia: Calificación" class="diagram-img">
-      <p class="diagram-caption">Figura 5. Flujo de secuencia para el proceso de calificación de una monitoria.</p>
+      <div class="mermaid">
+sequenceDiagram
+  actor E as Estudiante
+  participant App as Aplicación MonitorHub
+  participant BD as Base de Datos
+  actor D as Docente
+
+  E->>App: Acceder a sesiones completadas
+  App->>BD: Consultar sesiones sin calificar del estudiante
+  BD-->>App: Retornar lista de sesiones
+  App-->>E: Mostrar sesiones pendientes de calificación
+
+  E->>App: Seleccionar sesión a calificar
+  App-->>E: Mostrar formulario de calificación
+
+  E->>App: Enviar calificación (estrellas 1-5, comentario privado, nota final)
+  App->>App: Calcular puntaje Hake\ng = (nota_final - nota_inicial) / (5.0 - nota_inicial)
+  App->>BD: Guardar Calificacion (estrellas, comentario, nota_final, puntaje_hake)
+  App->>BD: Recalcular promedios del PerfilMonitor
+  App->>BD: Actualizar SolicitudMonitoria → COMPLETADO
+  BD-->>App: Confirmación
+  App-->>E: Confirmar calificación guardada
+
+  D->>App: Consultar calificaciones de sus materias
+  App->>BD: Buscar calificaciones por materia del docente
+  BD-->>App: Retornar calificaciones + comentarios privados
+  App-->>D: Mostrar estrellas + comentarios privados + tasa de éxito Hake
+      </div>
+      <p class="diagram-caption">Figura 5. Diagrama de Secuencia: Proceso de calificación de una monitoria.</p>
     </div>
   </section>
 
@@ -1272,7 +1580,64 @@
 
     <h3>7.2 Capas de la Arquitectura</h3>
     <div class="diagram-container">
-      <img src="static/img/componentes.png" alt="Diagrama de Componentes" class="diagram-img">
+      <div class="mermaid">
+graph TB
+  subgraph Cliente["🌐 Cliente Navegador"]
+    WS["WebSocket Client\nJavaScript"]
+    UI["Django Templates\n+ Bootstrap 5.3"]
+  end
+
+  subgraph Vercel["▲ Vercel — Serverless"]
+    subgraph Presentacion["Capa de Presentación"]
+      CH["Django Channels\nWebSocket"]
+      VW["Django Views\nHTTP / ASGI"]
+    end
+
+    subgraph Negocio["Capa de Negocio"]
+      SVC_CHAT["Servicio\nde Chat"]
+      SVC_HAKE["Servicio Ranking\nHake"]
+      SVC_NOT["Servicio de\nNotificaciones"]
+      SVC_SES["Servicio Sesiones\nTeams"]
+      SVC_AUTH["Servicio de\nAutenticación"]
+    end
+  end
+
+  subgraph Datos["💾 Capa de Datos"]
+    REDIS["🔴 Redis\nChannel Layer"]
+    ORM["Django ORM"]
+    NEON["🐘 PostgreSQL\nNeon — Vercel"]
+    MYSQL["🗄️ MySQL\nServidor USB"]
+  end
+
+  subgraph MS365["☁️ Microsoft 365"]
+    AAD["Azure AD\nOAuth 2.0"]
+    GRAPH["Microsoft\nGraph API"]
+    CORREO["Correo\nInstitucional"]
+    TEAMS["Microsoft\nTeams"]
+  end
+
+  WS <-->|WSS| CH
+  UI <-->|HTTPS| VW
+  VW --> SVC_CHAT
+  VW --> SVC_HAKE
+  VW --> SVC_NOT
+  VW --> SVC_SES
+  VW --> SVC_AUTH
+  CH --> SVC_CHAT
+  SVC_CHAT --> REDIS
+  SVC_HAKE --> ORM
+  SVC_NOT --> ORM
+  SVC_SES --> ORM
+  SVC_AUTH --> ORM
+  ORM --> NEON
+  ORM -.->|"Producción USB"| MYSQL
+  REDIS --> ORM
+  SVC_AUTH -->|OAuth 2.0| AAD
+  SVC_NOT -->|Enviar correo| GRAPH
+  SVC_SES -->|Crear reunión| GRAPH
+  GRAPH --> CORREO
+  GRAPH --> TEAMS
+      </div>
       <p class="diagram-caption">Figura 6. Diagrama de Componentes: Arquitectura por capas del sistema.</p>
     </div>
 
