@@ -95,7 +95,7 @@ ASGI_APPLICATION = 'monitorhub.asgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 # Si existe DATABASE_URL (Vercel/Neon) usa PostgreSQL; si no, cae a SQLite local
 
-_db_url = os.environ.get('DATABASE_URL', '')
+_db_url = os.environ.get('DATABASE_URL', '').lstrip('﻿').strip()
 if _db_url:
     _p = urlparse(_db_url)
     DATABASES = {
