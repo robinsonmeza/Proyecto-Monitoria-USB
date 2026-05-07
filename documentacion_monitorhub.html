@@ -1877,9 +1877,49 @@ vercel --prod</div>
         </div>
         <div class="exp-main-area">
           <div id="uc-detail">
-            <div class="uc-welcome">
-              <div class="wi">📋</div>
-              <p>Selecciona un caso de uso<br>de la barra lateral para ver su detalle completo</p>
+            <div class="exp-diag-header"><h4>Diagrama de Casos de Uso — Vista General</h4><p>Haz clic en un caso de uso de la barra lateral para ver su descripción detallada</p></div>
+            <div class="mermaid">
+graph LR
+    EST(("Estudiante"))
+    MON(("Monitor"))
+    DOC(("Docente"))
+    ADM(("Admin"))
+    subgraph AUTH["Autenticacion"]
+        A1["Login / Logout"]
+    end
+    subgraph MONIT["Monitorias"]
+        M1["Buscar monitor"]
+        M2["Solicitar monitoria"]
+        M3["Mensajes al monitor"]
+        M4["Calificar monitor"]
+    end
+    subgraph TUT["Tutorias"]
+        T1["Publicar disponibilidad"]
+        T2["Solicitar tutoria"]
+        T3["Gestionar solicitudes tutoria"]
+    end
+    subgraph ADM_S["Administracion"]
+        AD1["Aprobar monitores"]
+        AD2["Gestionar usuarios"]
+        AD3["Estadisticas globales"]
+    end
+    EST --- A1
+    EST --- M1
+    EST --- M2
+    EST --- M3
+    EST --- M4
+    EST --- T2
+    MON --- A1
+    MON --- M2
+    MON --- M1
+    MON --- T3
+    DOC --- A1
+    DOC --- T1
+    DOC --- T3
+    ADM --- A1
+    ADM --- AD1
+    ADM --- AD2
+    ADM --- AD3
             </div>
           </div>
         </div>
@@ -1909,34 +1949,33 @@ vercel --prod</div>
             <div class="mermaid">
 classDiagram
     class Usuario {
-        +id BigInt
-        +email EmailField
-        +nombre CharField
-        +rol CharField
-        +is_active BooleanField
-        +date_joined DateTimeField
+        +email
+        +nombre
+        +rol
+        +is_active
+        +date_joined
     }
     class PerfilEstudiante {
-        +programa CharField
-        +semestre IntegerField
-        +promedio DecimalField
+        +programa
+        +semestre
+        +promedio
     }
     class PerfilMonitor {
-        +bio TextField
-        +aprobado BooleanField
-        +fecha_aprobacion DateField
-        +puntuacion_hake FloatField
-        +total_sesiones IntegerField
-        +estrellas FloatField
+        +bio
+        +aprobado
+        +fecha_aprobacion
+        +puntuacion_hake
+        +total_sesiones
+        +estrellas
     }
     class PerfilDocente {
-        +titulo CharField
-        +departamento CharField
-        +foto ImageField
+        +titulo
+        +departamento
+        +foto
     }
-    Usuario "1" --> "0..1" PerfilEstudiante : tiene
-    Usuario "1" --> "0..1" PerfilMonitor : tiene
-    Usuario "1" --> "0..1" PerfilDocente : tiene
+    Usuario --> PerfilEstudiante
+    Usuario --> PerfilMonitor
+    Usuario --> PerfilDocente
             </div>
           </div>
           <div id="clase-m2" class="exp-diagram-pane">
@@ -1944,39 +1983,39 @@ classDiagram
             <div class="mermaid">
 classDiagram
     class PerfilMonitor {
-        +aprobado BooleanField
-        +puntuacion_hake FloatField
+        +aprobado
+        +puntuacion_hake
     }
     class Materia {
-        +nombre CharField
-        +codigo CharField
-        +creditos IntegerField
+        +nombre
+        +codigo
+        +creditos
     }
     class DisponibilidadMonitor {
-        +dia_semana CharField
-        +hora_inicio TimeField
-        +hora_fin TimeField
-        +modalidad CharField
-        +activo BooleanField
+        +dia_semana
+        +hora_inicio
+        +hora_fin
+        +modalidad
+        +activo
     }
     class SolicitudMonitoria {
-        +nota_inicial DecimalField
-        +nota_corte_actual DecimalField
-        +estado CharField
-        +fecha_creacion DateTimeField
-        +notas TextField
+        +nota_inicial
+        +nota_corte_actual
+        +estado
+        +fecha_creacion
+        +notas
     }
     class Sesion {
-        +fecha DateField
-        +hora_inicio TimeField
-        +hora_fin TimeField
-        +estado CharField
+        +fecha
+        +hora_inicio
+        +hora_fin
+        +estado
     }
-    PerfilMonitor "1" --> "0..*" Materia : ensenha
-    PerfilMonitor "1" --> "0..*" DisponibilidadMonitor : tiene
-    PerfilMonitor "1" --> "0..*" SolicitudMonitoria : recibe
-    SolicitudMonitoria "0..*" --> "1" Materia : es de
-    SolicitudMonitoria "1" --> "0..*" Sesion : genera
+    PerfilMonitor --> Materia
+    PerfilMonitor --> DisponibilidadMonitor
+    PerfilMonitor --> SolicitudMonitoria
+    SolicitudMonitoria --> Materia
+    SolicitudMonitoria --> Sesion
             </div>
           </div>
           <div id="clase-m3" class="exp-diagram-pane">
@@ -1984,38 +2023,38 @@ classDiagram
             <div class="mermaid">
 classDiagram
     class PerfilDocente {
-        +titulo CharField
-        +departamento CharField
+        +titulo
+        +departamento
     }
     class Materia {
-        +nombre CharField
-        +codigo CharField
+        +nombre
+        +codigo
     }
     class DisponibilidadDocente {
-        +dia_semana CharField
-        +hora_inicio TimeField
-        +hora_fin TimeField
-        +modalidad CharField
-        +ubicacion CharField
-        +activo BooleanField
+        +dia_semana
+        +hora_inicio
+        +hora_fin
+        +modalidad
+        +ubicacion
+        +activo
     }
     class SolicitudTutoria {
-        +nota_inicial DecimalField
-        +nota_corte_actual DecimalField
-        +estado CharField
-        +fecha_creacion DateTimeField
-        +notas TextField
+        +nota_inicial
+        +nota_corte_actual
+        +estado
+        +fecha_creacion
+        +notas
     }
     class Sesion {
-        +fecha DateField
-        +hora_inicio TimeField
-        +estado CharField
+        +fecha
+        +hora_inicio
+        +estado
     }
-    PerfilDocente "1" --> "0..*" DisponibilidadDocente : publica
-    PerfilDocente "1" --> "0..*" SolicitudTutoria : recibe
-    DisponibilidadDocente "0..*" --> "0..1" Materia : para
-    SolicitudTutoria "0..*" --> "1" Materia : es de
-    SolicitudTutoria "1" --> "0..*" Sesion : genera
+    PerfilDocente --> DisponibilidadDocente
+    PerfilDocente --> SolicitudTutoria
+    DisponibilidadDocente --> Materia
+    SolicitudTutoria --> Materia
+    SolicitudTutoria --> Sesion
             </div>
           </div>
           <div id="clase-m4" class="exp-diagram-pane">
@@ -2023,24 +2062,24 @@ classDiagram
             <div class="mermaid">
 classDiagram
     class PerfilEstudiante {
-        +programa CharField
-        +promedio DecimalField
+        +programa
+        +promedio
     }
     class PerfilMonitor {
-        +puntuacion_hake FloatField
-        +total_sesiones IntegerField
-        +estrellas FloatField
+        +puntuacion_hake
+        +total_sesiones
+        +estrellas
     }
     class Calificacion {
-        +nota_inicial DecimalField
-        +nota_final DecimalField
-        +ganancia_hake FloatField
-        +estrellas IntegerField
-        +comentario TextField
-        +fecha DateTimeField
+        +nota_inicial
+        +nota_final
+        +ganancia_hake
+        +estrellas
+        +comentario
+        +fecha
     }
-    PerfilEstudiante "1" --> "0..*" Calificacion : emite
-    PerfilMonitor "1" --> "0..*" Calificacion : recibe
+    PerfilEstudiante --> Calificacion
+    PerfilMonitor --> Calificacion
             </div>
           </div>
           <div id="clase-m5" class="exp-diagram-pane">
@@ -2048,44 +2087,98 @@ classDiagram
             <div class="mermaid">
 classDiagram
     class Usuario {
-        +email EmailField
-        +rol CharField
+        +email
+        +rol
     }
     class SolicitudMonitoria {
-        +estado CharField
+        +estado
     }
     class Mensaje {
-        +contenido TextField
-        +fecha_envio DateTimeField
-        +leido BooleanField
+        +contenido
+        +fecha_envio
+        +leido
     }
     class Notificacion {
-        +tipo CharField
-        +mensaje TextField
-        +leida BooleanField
-        +fecha DateTimeField
+        +tipo
+        +mensaje
+        +leida
+        +fecha
     }
-    SolicitudMonitoria "1" --> "0..*" Mensaje : contiene
-    Usuario "1" --> "0..*" Notificacion : recibe
+    SolicitudMonitoria --> Mensaje
+    Usuario --> Notificacion
             </div>
           </div>
           <div id="clase-completo" class="exp-diagram-pane">
             <div class="exp-diag-header"><h4>Diagrama Completo — Todas las Entidades</h4><p>Vista consolidada del modelo de datos completo de MonitorHub USB (12 entidades)</p></div>
             <div class="mermaid">
 classDiagram
-    class Usuario { +email +nombre +rol }
-    class PerfilEstudiante { +programa +semestre +promedio }
-    class PerfilMonitor { +aprobado +puntuacion_hake +estrellas }
-    class PerfilDocente { +titulo +departamento }
-    class Materia { +nombre +codigo +creditos }
-    class DisponibilidadMonitor { +dia_semana +hora_inicio +hora_fin +modalidad }
-    class DisponibilidadDocente { +dia_semana +hora_inicio +hora_fin +ubicacion }
-    class SolicitudMonitoria { +nota_inicial +nota_corte_actual +estado }
-    class SolicitudTutoria { +nota_inicial +nota_corte_actual +estado }
-    class Sesion { +fecha +hora_inicio +hora_fin +estado }
-    class Calificacion { +nota_final +ganancia_hake +estrellas }
-    class Mensaje { +contenido +fecha_envio +leido }
-    class Notificacion { +tipo +mensaje +leida }
+    class Usuario {
+        +email
+        +nombre
+        +rol
+    }
+    class PerfilEstudiante {
+        +programa
+        +semestre
+        +promedio
+    }
+    class PerfilMonitor {
+        +aprobado
+        +puntuacion_hake
+        +estrellas
+    }
+    class PerfilDocente {
+        +titulo
+        +departamento
+    }
+    class Materia {
+        +nombre
+        +codigo
+        +creditos
+    }
+    class DisponibilidadMonitor {
+        +dia_semana
+        +hora_inicio
+        +hora_fin
+        +modalidad
+    }
+    class DisponibilidadDocente {
+        +dia_semana
+        +hora_inicio
+        +hora_fin
+        +ubicacion
+    }
+    class SolicitudMonitoria {
+        +nota_inicial
+        +nota_corte_actual
+        +estado
+    }
+    class SolicitudTutoria {
+        +nota_inicial
+        +nota_corte_actual
+        +estado
+    }
+    class Sesion {
+        +fecha
+        +hora_inicio
+        +hora_fin
+        +estado
+    }
+    class Calificacion {
+        +nota_final
+        +ganancia_hake
+        +estrellas
+    }
+    class Mensaje {
+        +contenido
+        +fecha_envio
+        +leido
+    }
+    class Notificacion {
+        +tipo
+        +mensaje
+        +leida
+    }
     Usuario --> PerfilEstudiante
     Usuario --> PerfilMonitor
     Usuario --> PerfilDocente
@@ -2368,14 +2461,15 @@ sequenceDiagram
     participant SYS as Sistema
     participant BD as Base de Datos
     actor U as Usuario
-    participant JS as JavaScript Browser
+    participant JS as JavaScript
+    participant APP as App Web
     SYS->>BD: INSERT Notificacion usuario tipo mensaje leida=False
     BD-->>SYS: OK
     loop Polling cada 5 segundos
         JS->>APP: GET /notificaciones/no-leidas/
         APP->>BD: SELECT Notificacion leida=False usuario=U
         BD-->>APP: Notificaciones pendientes
-        APP-->>JS: JSON con notificaciones
+        APP-->>JS: JSON notificaciones
         JS->>U: Muestra Toast Bootstrap
     end
     U->>APP: POST /notificaciones/id/marcar-leida/
@@ -2403,17 +2497,17 @@ sequenceDiagram
             <div class="exp-diag-header"><h4>DC-01 — Arquitectura General</h4><p>Componentes del sistema y sus relaciones técnicas en el entorno Vercel + Neon.</p></div>
             <div class="mermaid">
 graph TB
-    CLI["Browser\nCliente Web"]
-    subgraph VERCEL["Vercel — Serverless"]
-        FE["Frontend\nBootstrap 5.3 + Bootstrap Icons"]
-        BE["Backend\nDjango 4.2 + Daphne ASGI"]
-        CH["Django Channels\nWebSocket"]
+    CLI["Browser - Cliente Web"]
+    subgraph VERCEL["Vercel Serverless"]
+        FE["Frontend - Bootstrap 5.3 + BS Icons"]
+        BE["Backend - Django 4.2 + Daphne ASGI"]
+        CH["Django Channels - WebSocket"]
     end
-    NEON[("PostgreSQL\nNeon — Serverless")]
-    MYSQL[("MySQL\nServidor USB — Produccion")]
-    REDIS["Redis\nChannel Layer"]
-    AZURE["Azure AD\nOAuth 2.0"]
-    GRAPH["Microsoft Graph API\nCorreo / Teams"]
+    NEON[("PostgreSQL - Neon Serverless")]
+    MYSQL[("MySQL - Servidor USB")]
+    REDIS["Redis - Channel Layer"]
+    AZURE["Azure AD - OAuth 2.0"]
+    GRAPH["Microsoft Graph API - Correo/Teams"]
     CLI -->|HTTPS| FE
     FE -->|HTTP WSGI| BE
     CLI -->|WSS| CH
@@ -2429,22 +2523,22 @@ graph TB
             <div class="mermaid">
 graph LR
     subgraph DEV["Desarrollo Local"]
-        D1["Django\nrunserver 8001"]
-        D2[("SQLite\ndb.sqlite3")]
-        D3["Redis\nlocalhost:6379"]
+        D1["Django runserver 8001"]
+        D2[("SQLite db.sqlite3")]
+        D3["Redis localhost:6379"]
         D1 --- D2
         D1 --- D3
     end
-    subgraph PROD_V["Vercel — Demo y Evaluacion"]
-        V1["Django + Daphne\nServerless Functions"]
-        V2[("PostgreSQL\nNeon — us-east-1")]
+    subgraph PROD_V["Vercel - Demo y Evaluacion"]
+        V1["Django + Daphne Serverless"]
+        V2[("PostgreSQL Neon us-east-1")]
         V1 --- V2
     end
-    subgraph PROD_U["Servidor USB — Produccion"]
-        U1["Django + Daphne\n+ Nginx"]
-        U2[("MySQL\nServidor Universitario")]
+    subgraph PROD_U["Servidor USB - Produccion"]
+        U1["Django + Daphne + Nginx"]
+        U2[("MySQL Servidor Universitario")]
         U3["Redis"]
-        U4["Azure AD\nMicrosoft 365"]
+        U4["Azure AD Microsoft 365"]
         U1 --- U2
         U1 --- U3
         U1 --- U4
