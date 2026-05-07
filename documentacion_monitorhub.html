@@ -1194,148 +1194,7 @@ graph LR
     <h3 id="clases">5.2 Diagrama de Clases</h3>
     <p>Muestra las entidades del sistema, sus atributos, métodos y las relaciones entre ellas (asociación, composición, herencia).</p>
     <div class="diagram-container">
-      <div class="mermaid">
-classDiagram
-  direction TB
-
-  class Usuario {
-    +id: int
-    +correo: str
-    +nombre: str
-    +apellido: str
-    +id_microsoft: str
-    +rol: Rol
-    +activo: bool
-    +fecha_creacion: datetime
-  }
-
-  class PerfilEstudiante {
-    +id: int
-    +codigo_estudiante: str
-    +programa: str
-    +semestre: int
-  }
-
-  class PerfilMonitor {
-    +id: int
-    +biografia: str
-    +aprobado: bool
-    +fecha_aprobacion: datetime
-    +promedio_estrellas: float
-    +promedio_hake: float
-    +total_sesiones: int
-    +calcularRanking() float
-  }
-
-  class PerfilDocente {
-    +id: int
-    +departamento: str
-  }
-
-  class Materia {
-    +id: int
-    +codigo: str
-    +nombre: str
-    +departamento: str
-  }
-
-  class DisponibilidadMonitor {
-    +id: int
-    +dia_semana: DiaSemana
-    +hora_inicio: time
-    +hora_fin: time
-    +modalidad: Modalidad
-    +ubicacion: str
-    +activo: bool
-  }
-
-  class DisponibilidadDocente {
-    +id: int
-    +dia_semana: DiaSemana
-    +hora_inicio: time
-    +hora_fin: time
-    +modalidad: Modalidad
-    +ubicacion: str
-    +activo: bool
-  }
-
-  class SolicitudMonitoria {
-    +id: int
-    +nota_inicial: float
-    +nota_corte_actual: float
-    +estado: EstadoSolicitud
-    +fecha_creacion: datetime
-    +notas: str
-  }
-
-  class SolicitudTutoria {
-    +id: int
-    +nota_inicial: float
-    +nota_corte_actual: float
-    +estado: EstadoSolicitud
-    +fecha_creacion: datetime
-    +notas: str
-  }
-
-  class Sesion {
-    +id: int
-    +fecha_hora: datetime
-    +duracion_minutos: int
-    +modalidad: Modalidad
-    +url_teams: str
-    +ubicacion: str
-    +estado: EstadoSesion
-  }
-
-  class Calificacion {
-    +id: int
-    +estrellas: int
-    +nota_final: float
-    +comentario_privado: str
-    +puntaje_hake: float
-    +fecha_creacion: datetime
-    +calcularHake() float
-  }
-
-  class Mensaje {
-    +id: int
-    +contenido: str
-    +fecha_envio: datetime
-    +fecha_lectura: datetime
-    +es_tiempo_real: bool
-  }
-
-  class Notificacion {
-    +id: int
-    +tipo: str
-    +mensaje: str
-    +fecha_envio: datetime
-    +enviado_por_correo: bool
-  }
-
-  Usuario "1" --> "0..1" PerfilEstudiante : vinculado a
-  Usuario "1" --> "0..1" PerfilMonitor : vinculado a
-  Usuario "1" --> "0..1" PerfilDocente : vinculado a
-
-  PerfilMonitor "1" --> "*" DisponibilidadMonitor : publica
-  PerfilMonitor "*" --> "*" Materia : enseña
-  PerfilDocente "1" --> "*" DisponibilidadDocente : publica
-  DisponibilidadDocente "*" --> "0..1" Materia
-
-  SolicitudMonitoria "*" --> "1" PerfilEstudiante : estudiante
-  SolicitudMonitoria "*" --> "1" PerfilMonitor : monitor
-  SolicitudMonitoria "*" --> "1" Materia
-  SolicitudMonitoria "1" --> "*" Sesion
-  SolicitudMonitoria "1" --> "*" Calificacion
-  SolicitudMonitoria "1" --> "*" Mensaje
-
-  SolicitudTutoria "*" --> "1" PerfilEstudiante : estudiante
-  SolicitudTutoria "*" --> "1" PerfilDocente : docente
-  SolicitudTutoria "*" --> "1" Materia
-
-  Notificacion "*" --> "1" Usuario : destinatario
-  Mensaje "*" --> "1" Usuario : remitente
-      </div>
+      <img src="static/img/diagramas/clase-completo.png" alt="Diagrama de Clases - Todas las Entidades" style="max-width:100%;height:auto;display:block;margin:16px auto;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.10);">
       <p class="diagram-caption">Figura 2. Diagrama de Clases: Entidades y relaciones del dominio.</p>
     </div>
 
@@ -1878,49 +1737,9 @@ vercel --prod</div>
         <div class="exp-main-area">
           <div id="uc-detail">
             <div class="exp-diag-header"><h4>Diagrama de Casos de Uso — Vista General</h4><p>Haz clic en un caso de uso de la barra lateral para ver su descripción detallada</p></div>
-            <div class="mermaid">
-graph LR
-    EST(("Estudiante"))
-    MON(("Monitor"))
-    DOC(("Docente"))
-    ADM(("Admin"))
-    subgraph AUTH["Autenticacion"]
-        A1["Login / Logout"]
-    end
-    subgraph MONIT["Monitorias"]
-        M1["Buscar monitor"]
-        M2["Solicitar monitoria"]
-        M3["Mensajes al monitor"]
-        M4["Calificar monitor"]
-    end
-    subgraph TUT["Tutorias"]
-        T1["Publicar disponibilidad"]
-        T2["Solicitar tutoria"]
-        T3["Gestionar solicitudes tutoria"]
-    end
-    subgraph ADM_S["Administracion"]
-        AD1["Aprobar monitores"]
-        AD2["Gestionar usuarios"]
-        AD3["Estadisticas globales"]
-    end
-    EST --- A1
-    EST --- M1
-    EST --- M2
-    EST --- M3
-    EST --- M4
-    EST --- T2
-    MON --- A1
-    MON --- M2
-    MON --- M1
-    MON --- T3
-    DOC --- A1
-    DOC --- T1
-    DOC --- T3
-    ADM --- A1
-    ADM --- AD1
-    ADM --- AD2
-    ADM --- AD3
-            </div>
+            
+            <img src="static/img/diagramas/uc-overview.png" alt="Diagrama de Casos de Uso - Vista General" style="max-width:100%;height:auto;display:block;margin:16px auto;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.10);">
+            
           </div>
         </div>
       </div>
@@ -1946,258 +1765,37 @@ graph LR
         <div class="exp-main-area">
           <div id="clase-m1" class="exp-diagram-pane active">
             <div class="exp-diag-header"><h4>Módulo 1 — Usuarios y Perfiles</h4><p>Modelo central: AbstractUser extendido con perfiles por rol (relación 1:1)</p></div>
-            <div class="mermaid">
-classDiagram
-    class Usuario {
-        +email
-        +nombre
-        +rol
-        +is_active
-        +date_joined
-    }
-    class PerfilEstudiante {
-        +programa
-        +semestre
-        +promedio
-    }
-    class PerfilMonitor {
-        +bio
-        +aprobado
-        +fecha_aprobacion
-        +puntuacion_hake
-        +total_sesiones
-        +estrellas
-    }
-    class PerfilDocente {
-        +titulo
-        +departamento
-        +foto
-    }
-    Usuario --> PerfilEstudiante
-    Usuario --> PerfilMonitor
-    Usuario --> PerfilDocente
-            </div>
+            
+            <img src="static/img/diagramas/clase-m1.png" alt="Módulo 1 - Usuarios y Perfiles" style="max-width:100%;height:auto;display:block;margin:16px auto;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.10);">
+            
           </div>
           <div id="clase-m2" class="exp-diagram-pane">
             <div class="exp-diag-header"><h4>Módulo 2 — Monitorias</h4><p>Flujo estudiante → monitor: disponibilidad, solicitud, sesión</p></div>
-            <div class="mermaid">
-classDiagram
-    class PerfilMonitor {
-        +aprobado
-        +puntuacion_hake
-    }
-    class Materia {
-        +nombre
-        +codigo
-        +creditos
-    }
-    class DisponibilidadMonitor {
-        +dia_semana
-        +hora_inicio
-        +hora_fin
-        +modalidad
-        +activo
-    }
-    class SolicitudMonitoria {
-        +nota_inicial
-        +nota_corte_actual
-        +estado
-        +fecha_creacion
-        +notas
-    }
-    class Sesion {
-        +fecha
-        +hora_inicio
-        +hora_fin
-        +estado
-    }
-    PerfilMonitor --> Materia
-    PerfilMonitor --> DisponibilidadMonitor
-    PerfilMonitor --> SolicitudMonitoria
-    SolicitudMonitoria --> Materia
-    SolicitudMonitoria --> Sesion
-            </div>
+            <img src="static/img/diagramas/clase-m2.png" alt="Módulo 2 - Monitorias" style="max-width:100%;height:auto;display:block;margin:16px auto;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.10);">
           </div>
           <div id="clase-m3" class="exp-diagram-pane">
             <div class="exp-diag-header"><h4>Módulo 3 — Tutorías</h4><p>Flujo estudiante → docente: disponibilidad, solicitud, sesión</p></div>
-            <div class="mermaid">
-classDiagram
-    class PerfilDocente {
-        +titulo
-        +departamento
-    }
-    class Materia {
-        +nombre
-        +codigo
-    }
-    class DisponibilidadDocente {
-        +dia_semana
-        +hora_inicio
-        +hora_fin
-        +modalidad
-        +ubicacion
-        +activo
-    }
-    class SolicitudTutoria {
-        +nota_inicial
-        +nota_corte_actual
-        +estado
-        +fecha_creacion
-        +notas
-    }
-    class Sesion {
-        +fecha
-        +hora_inicio
-        +estado
-    }
-    PerfilDocente --> DisponibilidadDocente
-    PerfilDocente --> SolicitudTutoria
-    DisponibilidadDocente --> Materia
-    SolicitudTutoria --> Materia
-    SolicitudTutoria --> Sesion
-            </div>
+            
+            <img src="static/img/diagramas/clase-m3.png" alt="Módulo 3 - Tutorías" style="max-width:100%;height:auto;display:block;margin:16px auto;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.10);">
+            
           </div>
           <div id="clase-m4" class="exp-diagram-pane">
             <div class="exp-diag-header"><h4>Módulo 4 — Evaluación y Ranking</h4><p>Sistema Hake: calificación emitida por estudiante, recibida por monitor</p></div>
-            <div class="mermaid">
-classDiagram
-    class PerfilEstudiante {
-        +programa
-        +promedio
-    }
-    class PerfilMonitor {
-        +puntuacion_hake
-        +total_sesiones
-        +estrellas
-    }
-    class Calificacion {
-        +nota_inicial
-        +nota_final
-        +ganancia_hake
-        +estrellas
-        +comentario
-        +fecha
-    }
-    PerfilEstudiante --> Calificacion
-    PerfilMonitor --> Calificacion
-            </div>
+            
+            <img src="static/img/diagramas/clase-m4.png" alt="Módulo 4 - Evaluación y Ranking" style="max-width:100%;height:auto;display:block;margin:16px auto;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.10);">
+            
           </div>
           <div id="clase-m5" class="exp-diagram-pane">
             <div class="exp-diag-header"><h4>Módulo 5 — Comunicación</h4><p>Mensajería asíncrona por solicitud y notificaciones internas</p></div>
-            <div class="mermaid">
-classDiagram
-    class Usuario {
-        +email
-        +rol
-    }
-    class SolicitudMonitoria {
-        +estado
-    }
-    class Mensaje {
-        +contenido
-        +fecha_envio
-        +leido
-    }
-    class Notificacion {
-        +tipo
-        +mensaje
-        +leida
-        +fecha
-    }
-    SolicitudMonitoria --> Mensaje
-    Usuario --> Notificacion
-            </div>
+            
+            <img src="static/img/diagramas/clase-m5.png" alt="Módulo 5 - Comunicación" style="max-width:100%;height:auto;display:block;margin:16px auto;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.10);">
+            
           </div>
           <div id="clase-completo" class="exp-diagram-pane">
             <div class="exp-diag-header"><h4>Diagrama Completo — Todas las Entidades</h4><p>Vista consolidada del modelo de datos completo de MonitorHub USB (12 entidades)</p></div>
-            <div class="mermaid">
-classDiagram
-    class Usuario {
-        +email
-        +nombre
-        +rol
-    }
-    class PerfilEstudiante {
-        +programa
-        +semestre
-        +promedio
-    }
-    class PerfilMonitor {
-        +aprobado
-        +puntuacion_hake
-        +estrellas
-    }
-    class PerfilDocente {
-        +titulo
-        +departamento
-    }
-    class Materia {
-        +nombre
-        +codigo
-        +creditos
-    }
-    class DisponibilidadMonitor {
-        +dia_semana
-        +hora_inicio
-        +hora_fin
-        +modalidad
-    }
-    class DisponibilidadDocente {
-        +dia_semana
-        +hora_inicio
-        +hora_fin
-        +ubicacion
-    }
-    class SolicitudMonitoria {
-        +nota_inicial
-        +nota_corte_actual
-        +estado
-    }
-    class SolicitudTutoria {
-        +nota_inicial
-        +nota_corte_actual
-        +estado
-    }
-    class Sesion {
-        +fecha
-        +hora_inicio
-        +hora_fin
-        +estado
-    }
-    class Calificacion {
-        +nota_final
-        +ganancia_hake
-        +estrellas
-    }
-    class Mensaje {
-        +contenido
-        +fecha_envio
-        +leido
-    }
-    class Notificacion {
-        +tipo
-        +mensaje
-        +leida
-    }
-    Usuario --> PerfilEstudiante
-    Usuario --> PerfilMonitor
-    Usuario --> PerfilDocente
-    PerfilMonitor --> Materia
-    PerfilMonitor --> DisponibilidadMonitor
-    PerfilMonitor --> SolicitudMonitoria
-    PerfilDocente --> DisponibilidadDocente
-    PerfilDocente --> SolicitudTutoria
-    PerfilEstudiante --> SolicitudMonitoria
-    PerfilEstudiante --> SolicitudTutoria
-    PerfilEstudiante --> Calificacion
-    PerfilMonitor --> Calificacion
-    SolicitudMonitoria --> Materia
-    SolicitudTutoria --> Materia
-    SolicitudMonitoria --> Sesion
-    SolicitudTutoria --> Sesion
-    SolicitudMonitoria --> Mensaje
-    Usuario --> Notificacion
-            </div>
+            
+            <img src="static/img/diagramas/clase-completo.png" alt="Diagrama Completo - Todas las Entidades" style="max-width:100%;height:auto;display:block;margin:16px auto;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.10);">
+            
           </div>
         </div>
       </div>
@@ -2237,246 +1835,69 @@ classDiagram
         <div class="exp-main-area">
           <div id="ds01" class="exp-diagram-pane active">
             <div class="exp-diag-header"><h4>DS-01 — Inicio de Sesión</h4><p>Autenticación con correo @unisimon.edu.co. Redirección según rol del usuario.</p></div>
-            <div class="mermaid">
-sequenceDiagram
-    actor U as Usuario
-    participant APP as App Web
-    participant BD as Base de Datos
-    U->>APP: GET /login/
-    APP-->>U: Formulario de login
-    U->>APP: POST email + contrasena
-    APP->>BD: SELECT Usuario WHERE email=?
-    BD-->>APP: Usuario encontrado
-    APP->>APP: Verifica contrasena hash
-    alt Credenciales válidas
-        APP->>APP: Crea sesion SESSION_KEY
-        APP-->>U: Redirige a dashboard segun rol
-    else Credenciales invalidas
-        APP-->>U: Error Credenciales incorrectas
-    end
-            </div>
+            
+            <img src="static/img/diagramas/ds01.png" alt="DS-01 Inicio de Sesión" style="max-width:100%;height:auto;display:block;margin:16px auto;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.10);">
+            
           </div>
           <div id="ds02" class="exp-diagram-pane">
             <div class="exp-diag-header"><h4>DS-02 — Búsqueda y Solicitud de Monitoria</h4><p>Estudiante busca monitor por materia y envía solicitud con nota inicial.</p></div>
-            <div class="mermaid">
-sequenceDiagram
-    actor EST as Estudiante
-    participant APP as App Web
-    participant BD as Base de Datos
-    EST->>APP: GET /monitores/?materia=X
-    APP->>BD: SELECT PerfilMonitor aprobado=True
-    BD-->>APP: Lista de monitores
-    APP-->>EST: Lista con horarios disponibles
-    EST->>APP: GET /monitores/detalle/id/
-    APP->>BD: SELECT PerfilMonitor + DisponibilidadMonitor
-    BD-->>APP: Perfil completo
-    APP-->>EST: Perfil del monitor
-    EST->>APP: POST /solicitudes/nueva/ materia nota_inicial notas
-    APP->>BD: INSERT SolicitudMonitoria estado=PENDIENTE
-    BD-->>APP: Solicitud creada
-    APP->>BD: INSERT Notificacion para monitor
-    BD-->>APP: OK
-    APP-->>EST: Solicitud enviada exitosamente
-            </div>
+            
+            <img src="static/img/diagramas/ds02.png" alt="DS-02 Búsqueda y Solicitud" style="max-width:100%;height:auto;display:block;margin:16px auto;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.10);">
+            
           </div>
           <div id="ds03" class="exp-diagram-pane">
             <div class="exp-diag-header"><h4>DS-03 — Aceptar / Rechazar Solicitud de Monitoria</h4><p>Monitor gestiona solicitudes pendientes y programa la sesión correspondiente.</p></div>
-            <div class="mermaid">
-sequenceDiagram
-    actor MON as Monitor
-    participant APP as App Web
-    participant BD as Base de Datos
-    actor EST as Estudiante
-    MON->>APP: GET /solicitudes/recibidas/
-    APP->>BD: SELECT SolicitudMonitoria estado=PENDIENTE
-    BD-->>APP: Lista de solicitudes
-    APP-->>MON: Solicitudes pendientes
-    MON->>APP: POST /solicitudes/id/responder/ accion=ACEPTAR
-    APP->>BD: UPDATE SolicitudMonitoria estado=ACEPTADA
-    BD-->>APP: OK
-    APP->>BD: INSERT Sesion fecha hora modalidad
-    BD-->>APP: Sesion creada
-    APP->>BD: INSERT Notificacion para estudiante
-    BD-->>APP: OK
-    APP-->>MON: Solicitud aceptada
-    note over EST: Recibe notificacion de aceptacion
-            </div>
+            
+            <img src="static/img/diagramas/ds03.png" alt="DS-03 Aceptar/Rechazar Solicitud" style="max-width:100%;height:auto;display:block;margin:16px auto;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.10);">
+            
           </div>
           <div id="ds04" class="exp-diagram-pane">
             <div class="exp-diag-header"><h4>DS-04 — Mensajes entre Estudiante y Monitor</h4><p>Buzón asíncrono de mensajes asociado a una solicitud de monitoria activa.</p></div>
-            <div class="mermaid">
-sequenceDiagram
-    actor EST as Estudiante
-    participant APP as App Web
-    participant BD as Base de Datos
-    actor MON as Monitor
-    EST->>APP: GET /mensajes/bandeja/
-    APP->>BD: SELECT Mensaje WHERE solicitud.estudiante=EST
-    BD-->>APP: Conversaciones activas
-    APP-->>EST: Bandeja de mensajes
-    EST->>APP: POST /mensajes/enviar/ solicitud_id contenido
-    APP->>BD: INSERT Mensaje leido=False
-    BD-->>APP: Mensaje guardado
-    APP->>BD: INSERT Notificacion para monitor
-    BD-->>APP: OK
-    APP-->>EST: Mensaje enviado
-    MON->>APP: GET /mensajes/bandeja/
-    APP->>BD: SELECT mensajes no leidos destinatario=MON
-    BD-->>APP: Mensajes nuevos
-    APP-->>MON: Conversacion con estudiante
-            </div>
+            
+            <img src="static/img/diagramas/ds04.png" alt="DS-04 Mensajes" style="max-width:100%;height:auto;display:block;margin:16px auto;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.10);">
+            
           </div>
           <div id="ds05" class="exp-diagram-pane">
             <div class="exp-diag-header"><h4>DS-05 — Calificación de Monitor (Sistema Hake)</h4><p>Estudiante califica al monitor. El sistema calcula la ganancia normalizada de Hake.</p></div>
-            <div class="mermaid">
-sequenceDiagram
-    actor EST as Estudiante
-    participant APP as App Web
-    participant BD as Base de Datos
-    EST->>APP: GET /calificaciones/pendientes/
-    APP->>BD: SELECT Sesion COMPLETADA sin calificacion
-    BD-->>APP: Sesiones disponibles
-    APP-->>EST: Lista para calificar
-    EST->>APP: POST /calificar/id/ nota_final estrellas comentario
-    APP->>APP: g = (nota_final - nota_inicial) / (5.0 - nota_inicial)
-    APP->>BD: INSERT Calificacion nota_final ganancia_hake estrellas
-    BD-->>APP: Calificacion guardada
-    APP->>BD: UPDATE PerfilMonitor puntuacion_hake estrellas total_sesiones
-    BD-->>APP: Perfil actualizado
-    APP->>BD: INSERT Notificacion para monitor
-    BD-->>APP: OK
-    APP-->>EST: Calificacion enviada exitosamente
-            </div>
+            
+            <img src="static/img/diagramas/ds05.png" alt="DS-05 Calificación de Monitor" style="max-width:100%;height:auto;display:block;margin:16px auto;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.10);">
+            
           </div>
           <div id="ds06" class="exp-diagram-pane">
             <div class="exp-diag-header"><h4>DS-06 — Publicar Disponibilidad de Tutoría</h4><p>Docente registra sus franjas horarias disponibles para sesiones de tutoría.</p></div>
-            <div class="mermaid">
-sequenceDiagram
-    actor DOC as Docente
-    participant APP as App Web
-    participant BD as Base de Datos
-    DOC->>APP: GET /sesiones/disponibilidad/
-    APP->>BD: SELECT DisponibilidadDocente WHERE docente=DOC
-    BD-->>APP: Horarios actuales
-    APP-->>DOC: Horarios y formulario de nueva franja
-    DOC->>APP: POST /sesiones/disponibilidad/nueva/ dia hora_inicio hora_fin modalidad ubicacion
-    APP->>BD: INSERT DisponibilidadDocente activo=True
-    BD-->>APP: Disponibilidad guardada
-    APP-->>DOC: Horario publicado exitosamente
-            </div>
+            
+            <img src="static/img/diagramas/ds06.png" alt="DS-06 Publicar Disponibilidad" style="max-width:100%;height:auto;display:block;margin:16px auto;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.10);">
+            
           </div>
           <div id="ds07" class="exp-diagram-pane">
             <div class="exp-diag-header"><h4>DS-07 — Solicitar Tutoría a Docente</h4><p>Estudiante consulta docentes con disponibilidad activa y envía solicitud de tutoría.</p></div>
-            <div class="mermaid">
-sequenceDiagram
-    actor EST as Estudiante
-    participant APP as App Web
-    participant BD as Base de Datos
-    EST->>APP: GET /solicitudes/docentes/
-    APP->>BD: SELECT PerfilDocente con DisponibilidadDocente activa
-    BD-->>APP: Docentes disponibles
-    APP-->>EST: Lista de docentes y horarios
-    EST->>APP: POST /solicitudes/tutoria/nueva/ docente_id materia_id nota_inicial notas
-    APP->>BD: INSERT SolicitudTutoria estado=PENDIENTE
-    BD-->>APP: Solicitud creada
-    APP->>BD: INSERT Notificacion para docente
-    BD-->>APP: OK
-    APP-->>EST: Solicitud de tutoria enviada
-            </div>
+            
+            <img src="static/img/diagramas/ds07.png" alt="DS-07 Solicitar Tutoría" style="max-width:100%;height:auto;display:block;margin:16px auto;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.10);">
+            
           </div>
           <div id="ds08" class="exp-diagram-pane">
             <div class="exp-diag-header"><h4>DS-08 — Aceptar / Rechazar Solicitud de Tutoría</h4><p>Docente revisa solicitudes de tutoría pendientes y programa la sesión.</p></div>
-            <div class="mermaid">
-sequenceDiagram
-    actor DOC as Docente
-    participant APP as App Web
-    participant BD as Base de Datos
-    actor EST as Estudiante
-    DOC->>APP: GET /solicitudes/tutoria/recibidas/
-    APP->>BD: SELECT SolicitudTutoria estado=PENDIENTE docente=DOC
-    BD-->>APP: Solicitudes pendientes
-    APP-->>DOC: Lista de solicitudes
-    DOC->>APP: POST /solicitudes/tutoria/id/responder/ accion=ACEPTAR
-    APP->>BD: UPDATE SolicitudTutoria estado=ACEPTADA
-    BD-->>APP: OK
-    APP->>BD: INSERT Sesion
-    BD-->>APP: Sesion creada
-    APP->>BD: INSERT Notificacion para estudiante
-    BD-->>APP: OK
-    APP-->>DOC: Tutoria aceptada y programada
-    note over EST: Recibe notificacion con detalles
-            </div>
+            
+            <img src="static/img/diagramas/ds08.png" alt="DS-08 Aceptar/Rechazar Tutoría" style="max-width:100%;height:auto;display:block;margin:16px auto;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.10);">
+            
           </div>
           <div id="ds09" class="exp-diagram-pane">
             <div class="exp-diag-header"><h4>DS-09 — Aprobación de Monitor por Administrador</h4><p>Ciclo completo: solicitud del estudiante → revisión → aprobación del administrador.</p></div>
-            <div class="mermaid">
-sequenceDiagram
-    actor EST as Estudiante
-    participant APP as App Web
-    participant BD as Base de Datos
-    actor ADM as Administrador
-    EST->>APP: POST /monitores/solicitar/ materias bio
-    APP->>BD: INSERT PerfilMonitor aprobado=False
-    BD-->>APP: Perfil creado
-    APP->>BD: INSERT Notificacion para admin
-    BD-->>APP: OK
-    APP-->>EST: Solicitud pendiente de aprobacion
-    ADM->>APP: GET /admin/monitores/pendientes/
-    APP->>BD: SELECT PerfilMonitor WHERE aprobado=False
-    BD-->>APP: Lista de solicitudes
-    APP-->>ADM: Perfiles pendientes
-    ADM->>APP: POST /admin/monitores/id/aprobar/
-    APP->>BD: UPDATE PerfilMonitor aprobado=True
-    BD-->>APP: OK
-    APP->>BD: INSERT Notificacion para estudiante
-    BD-->>APP: OK
-    APP-->>ADM: Monitor aprobado exitosamente
-            </div>
+            
+            <img src="static/img/diagramas/ds09.png" alt="DS-09 Aprobación de Monitor" style="max-width:100%;height:auto;display:block;margin:16px auto;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.10);">
+            
           </div>
           <div id="ds10" class="exp-diagram-pane">
             <div class="exp-diag-header"><h4>DS-10 — Gestión de Usuarios y Materias</h4><p>Administrador gestiona el catálogo del sistema desde el panel de administración.</p></div>
-            <div class="mermaid">
-sequenceDiagram
-    actor ADM as Administrador
-    participant APP as App Web
-    participant BD as Base de Datos
-    ADM->>APP: GET /admin/usuarios/
-    APP->>BD: SELECT all Usuarios
-    BD-->>APP: Lista completa
-    APP-->>ADM: Panel de gestion
-    ADM->>APP: POST /admin/materias/nueva/ nombre codigo creditos
-    APP->>BD: INSERT Materia
-    BD-->>APP: Materia creada
-    APP-->>ADM: Confirmacion
-    ADM->>APP: POST /admin/usuarios/id/desactivar/
-    APP->>BD: UPDATE Usuario is_active=False
-    BD-->>APP: OK
-    APP-->>ADM: Usuario desactivado
-            </div>
+            
+            <img src="static/img/diagramas/ds10.png" alt="DS-10 Gestión Usuarios y Materias" style="max-width:100%;height:auto;display:block;margin:16px auto;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.10);">
+            
           </div>
           <div id="ds11" class="exp-diagram-pane">
             <div class="exp-diag-header"><h4>DS-11 — Generación y Entrega de Notificaciones</h4><p>Notificaciones internas generadas por eventos del sistema con polling cada 5 segundos.</p></div>
-            <div class="mermaid">
-sequenceDiagram
-    participant SYS as Sistema
-    participant BD as Base de Datos
-    actor U as Usuario
-    participant JS as JavaScript
-    participant APP as App Web
-    SYS->>BD: INSERT Notificacion usuario tipo mensaje leida=False
-    BD-->>SYS: OK
-    loop Polling cada 5 segundos
-        JS->>APP: GET /notificaciones/no-leidas/
-        APP->>BD: SELECT Notificacion leida=False usuario=U
-        BD-->>APP: Notificaciones pendientes
-        APP-->>JS: JSON notificaciones
-        JS->>U: Muestra Toast Bootstrap
-    end
-    U->>APP: POST /notificaciones/id/marcar-leida/
-    APP->>BD: UPDATE Notificacion leida=True
-    BD-->>APP: OK
-    APP-->>U: Marcada como leida
-            </div>
+            
+            <img src="static/img/diagramas/ds11.png" alt="DS-11 Generación y Entrega de Notificaciones" style="max-width:100%;height:auto;display:block;margin:16px auto;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.10);">
+            
           </div>
         </div>
       </div>
@@ -2495,55 +1916,15 @@ sequenceDiagram
         <div class="exp-main-area">
           <div id="dc01" class="exp-diagram-pane active">
             <div class="exp-diag-header"><h4>DC-01 — Arquitectura General</h4><p>Componentes del sistema y sus relaciones técnicas en el entorno Vercel + Neon.</p></div>
-            <div class="mermaid">
-graph TB
-    CLI["Browser - Cliente Web"]
-    subgraph VERCEL["Vercel Serverless"]
-        FE["Frontend - Bootstrap 5.3 + BS Icons"]
-        BE["Backend - Django 4.2 + Daphne ASGI"]
-        CH["Django Channels - WebSocket"]
-    end
-    NEON[("PostgreSQL - Neon Serverless")]
-    MYSQL[("MySQL - Servidor USB")]
-    REDIS["Redis - Channel Layer"]
-    AZURE["Azure AD - OAuth 2.0"]
-    GRAPH["Microsoft Graph API - Correo/Teams"]
-    CLI -->|HTTPS| FE
-    FE -->|HTTP WSGI| BE
-    CLI -->|WSS| CH
-    CH -->|Channel Layer| REDIS
-    BE -->|psycopg2 SSL| NEON
-    BE -.->|pymysql| MYSQL
-    BE -->|MSAL| AZURE
-    BE -->|requests| GRAPH
-            </div>
+            
+            <img src="static/img/diagramas/dc01.png" alt="DC-01 Arquitectura General" style="max-width:100%;height:auto;display:block;margin:16px auto;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.10);">
+            
           </div>
           <div id="dc02" class="exp-diagram-pane">
             <div class="exp-diag-header"><h4>DC-02 — Despliegue por Entornos</h4><p>Configuración de base de datos y servicios según el entorno de ejecución del sistema.</p></div>
-            <div class="mermaid">
-graph LR
-    subgraph DEV["Desarrollo Local"]
-        D1["Django runserver 8001"]
-        D2[("SQLite db.sqlite3")]
-        D3["Redis localhost:6379"]
-        D1 --- D2
-        D1 --- D3
-    end
-    subgraph PROD_V["Vercel - Demo y Evaluacion"]
-        V1["Django + Daphne Serverless"]
-        V2[("PostgreSQL Neon us-east-1")]
-        V1 --- V2
-    end
-    subgraph PROD_U["Servidor USB - Produccion"]
-        U1["Django + Daphne + Nginx"]
-        U2[("MySQL Servidor Universitario")]
-        U3["Redis"]
-        U4["Azure AD Microsoft 365"]
-        U1 --- U2
-        U1 --- U3
-        U1 --- U4
-    end
-            </div>
+            
+            <img src="static/img/diagramas/dc02.png" alt="DC-02 Despliegue por Entornos" style="max-width:100%;height:auto;display:block;margin:16px auto;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.10);">
+            
           </div>
         </div>
       </div>
