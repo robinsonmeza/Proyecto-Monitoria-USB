@@ -565,6 +565,64 @@
       body { font-size: 12px; }
       .code-block { font-size: 10px; }
     }
+
+    /* ===== EXPLORADOR INTERACTIVO DE DIAGRAMAS ===== */
+    .exp-main-tabs { display:flex; gap:4px; border-bottom:2px solid #e2e8f0; margin-top:20px; }
+    .exp-main-tab {
+      padding:10px 18px; border:1px solid #e2e8f0; border-bottom:none;
+      border-radius:8px 8px 0 0; background:#f8fafc; cursor:pointer;
+      font-size:13px; font-weight:600; color:#4a5568; transition:all .2s; user-select:none;
+    }
+    .exp-main-tab:hover { background:#eef2ff; color:#0f3460; }
+    .exp-main-tab.active { background:#1a1a2e; color:white; border-color:#1a1a2e; }
+    .exp-panel { border:1px solid #e2e8f0; border-radius:0 8px 8px 8px; overflow:hidden; display:none; }
+    .exp-panel.active { display:block; }
+    .exp-layout { display:flex; min-height:540px; }
+    .exp-sidebar { width:232px; min-width:232px; background:#f8fafc; border-right:1px solid #e2e8f0; overflow-y:auto; }
+    .exp-main-area { flex:1; padding:24px; overflow-y:auto; max-height:620px; background:white; }
+    .exp-actor-header {
+      padding:9px 14px; font-size:11.5px; font-weight:700; color:white;
+      background:#0f3460; cursor:default; border-top:1px solid #1e3a8a;
+    }
+    .exp-actor-header:first-child { border-top:none; }
+    .exp-uc-list { list-style:none; padding:0; margin:0; }
+    .exp-uc-list li {
+      padding:7px 12px 7px 20px; font-size:11.5px; color:#4a5568; cursor:pointer;
+      border-left:3px solid transparent; border-bottom:1px solid #f0f4f8; transition:all .15s;
+    }
+    .exp-uc-list li:hover { background:#eef2ff; border-left-color:#e94560; color:#1a1a2e; }
+    .exp-uc-list li.active { background:#eef2ff; border-left-color:#e94560; color:#1a1a2e; font-weight:600; }
+    .exp-diagram-list { list-style:none; padding:6px 0; margin:0; }
+    .exp-diagram-list li {
+      padding:9px 14px; font-size:12px; color:#4a5568; cursor:pointer;
+      border-left:3px solid transparent; transition:all .15s;
+    }
+    .exp-diagram-list li:hover { background:#eef2ff; border-left-color:#e94560; color:#1a1a2e; }
+    .exp-diagram-list li.active { background:#eef2ff; border-left-color:#e94560; color:#1a1a2e; font-weight:600; }
+    .exp-list-section {
+      padding:10px 14px 4px; font-size:10px; font-weight:700;
+      text-transform:uppercase; letter-spacing:1px; color:#a0aec0; margin-top:4px;
+    }
+    .exp-diagram-pane { display:none; }
+    .exp-diagram-pane.active { display:block; }
+    .uc-welcome { display:flex; flex-direction:column; align-items:center; justify-content:center; height:420px; color:#a0aec0; text-align:center; }
+    .uc-welcome .wi { font-size:52px; margin-bottom:14px; }
+    .uc-welcome p { font-size:13px; line-height:1.8; }
+    .uc-card { border:1px solid #e2e8f0; border-radius:10px; overflow:hidden; }
+    .uc-card-header { background:#1a1a2e; color:white; padding:14px 20px; display:flex; align-items:center; gap:12px; }
+    .uc-id-badge { background:#e94560; color:white; padding:3px 10px; border-radius:6px; font-size:11px; font-weight:700; white-space:nowrap; }
+    .uc-card-title { font-size:15px; font-weight:700; }
+    .uc-body { padding:20px; }
+    .uc-row { display:grid; grid-template-columns:155px 1fr; gap:6px 14px; padding:9px 0; border-bottom:1px solid #f0f4f8; font-size:12.5px; }
+    .uc-row:last-child { border-bottom:none; }
+    .uc-label { font-weight:700; color:#4a5568; padding-top:2px; }
+    .uc-value { color:#2d3748; }
+    .uc-value ol,.uc-value ul { padding-left:18px; margin:0; }
+    .uc-value li { margin:3px 0; }
+    .exp-diag-header { margin-bottom:14px; padding-bottom:10px; border-bottom:2px solid #e2e8f0; }
+    .exp-diag-header h4 { font-size:15px; font-weight:700; color:#1a1a2e; margin-bottom:4px; }
+    .exp-diag-header p { font-size:12px; color:#718096; margin:0; }
+    .mermaid svg { max-width:100% !important; height:auto !important; }
   </style>
 </head>
 <body>
@@ -613,6 +671,14 @@
       </li>
       <li><a href="#negocio">Modelo de Negocio (Canvas)</a></li>
       <li><a href="#arquitectura">Arquitectura Técnica</a></li>
+      <li><a href="#explorador">Explorador Interactivo de Diagramas</a>
+        <ol class="toc-sub">
+          <li><a href="#explorador">Casos de Uso (30)</a></li>
+          <li><a href="#explorador">Diagrama de Clases (módulos + completo)</a></li>
+          <li><a href="#explorador">Diagramas de Secuencia (11)</a></li>
+          <li><a href="#explorador">Diagrama de Componentes (2)</a></li>
+        </ol>
+      </li>
     </ol>
   </div>
 
@@ -1745,6 +1811,721 @@ vercel --prod</div>
         <tr><td>5</td><td>Configurar SSL</td><td>Certificado institucional para HTTPS obligatorio (OAuth)</td></tr>
       </tbody>
     </table>
+  </section>
+
+  <!-- 8. EXPLORADOR INTERACTIVO DE DIAGRAMAS -->
+  <section id="explorador">
+    <div class="section-header">
+      <div class="section-number">8</div>
+      <h2 class="section-title">Explorador Interactivo de Diagramas</h2>
+    </div>
+    <p>Navegue por todos los diagramas UML del sistema. Seleccione el tipo de diagrama en las pestañas superiores y el diagrama específico en la barra lateral.</p>
+
+    <div class="exp-main-tabs">
+      <button class="exp-main-tab active" onclick="switchExpTab(0)">📋 Casos de Uso</button>
+      <button class="exp-main-tab" onclick="switchExpTab(1)">🏗️ Diagrama de Clases</button>
+      <button class="exp-main-tab" onclick="switchExpTab(2)">🔄 Diagramas de Secuencia</button>
+      <button class="exp-main-tab" onclick="switchExpTab(3)">⚙️ Componentes</button>
+    </div>
+
+    <!-- TAB 0: CASOS DE USO -->
+    <div class="exp-panel active" id="exp-tab-0">
+      <div class="exp-layout">
+        <div class="exp-sidebar">
+          <div class="exp-actor-header">👤 Estudiante &nbsp;<small style="font-weight:400;opacity:.7">(9 CU)</small></div>
+          <ul class="exp-uc-list">
+            <li onclick="showUC('uc01',this)">CU-01 · Iniciar sesión</li>
+            <li onclick="showUC('uc02',this)">CU-02 · Cerrar sesión</li>
+            <li onclick="showUC('uc03',this)">CU-03 · Buscar monitores</li>
+            <li onclick="showUC('uc04',this)">CU-04 · Ver perfil de monitor</li>
+            <li onclick="showUC('uc05',this)">CU-05 · Solicitar monitoria</li>
+            <li onclick="showUC('uc06',this)">CU-06 · Enviar mensaje al monitor</li>
+            <li onclick="showUC('uc07',this)">CU-07 · Calificar monitor</li>
+            <li onclick="showUC('uc08',this)">CU-08 · Solicitar tutoría a docente</li>
+            <li onclick="showUC('uc09',this)">CU-09 · Ver mis solicitudes</li>
+          </ul>
+          <div class="exp-actor-header">🎓 Monitor &nbsp;<small style="font-weight:400;opacity:.7">(7 CU)</small></div>
+          <ul class="exp-uc-list">
+            <li onclick="showUC('uc10',this)">CU-10 · Iniciar sesión</li>
+            <li onclick="showUC('uc11',this)">CU-11 · Ver solicitudes recibidas</li>
+            <li onclick="showUC('uc12',this)">CU-12 · Aceptar / rechazar solicitud</li>
+            <li onclick="showUC('uc13',this)">CU-13 · Gestionar disponibilidad</li>
+            <li onclick="showUC('uc14',this)">CU-14 · Ver ranking Hake propio</li>
+            <li onclick="showUC('uc15',this)">CU-15 · Ver mensajes de estudiantes</li>
+            <li onclick="showUC('uc16',this)">CU-16 · Solicitar monitoria (doble perfil)</li>
+          </ul>
+          <div class="exp-actor-header">👨‍🏫 Docente &nbsp;<small style="font-weight:400;opacity:.7">(7 CU)</small></div>
+          <ul class="exp-uc-list">
+            <li onclick="showUC('uc17',this)">CU-17 · Iniciar sesión</li>
+            <li onclick="showUC('uc18',this)">CU-18 · Publicar disponibilidad de tutoría</li>
+            <li onclick="showUC('uc19',this)">CU-19 · Ver solicitudes de tutoría</li>
+            <li onclick="showUC('uc20',this)">CU-20 · Aceptar / rechazar tutoría</li>
+            <li onclick="showUC('uc21',this)">CU-21 · Supervisar monitores de materia</li>
+            <li onclick="showUC('uc22',this)">CU-22 · Ver estadísticas de monitores</li>
+            <li onclick="showUC('uc23',this)">CU-23 · Gestionar perfil docente</li>
+          </ul>
+          <div class="exp-actor-header">🔧 Administrador &nbsp;<small style="font-weight:400;opacity:.7">(7 CU)</small></div>
+          <ul class="exp-uc-list">
+            <li onclick="showUC('uc24',this)">CU-24 · Aprobar monitor</li>
+            <li onclick="showUC('uc25',this)">CU-25 · Rechazar monitor</li>
+            <li onclick="showUC('uc26',this)">CU-26 · Gestionar usuarios</li>
+            <li onclick="showUC('uc27',this)">CU-27 · Gestionar materias</li>
+            <li onclick="showUC('uc28',this)">CU-28 · Ver estadísticas globales</li>
+            <li onclick="showUC('uc29',this)">CU-29 · Acceder panel Django /admin/</li>
+            <li onclick="showUC('uc30',this)">CU-30 · Ver ranking global de monitores</li>
+          </ul>
+        </div>
+        <div class="exp-main-area">
+          <div id="uc-detail">
+            <div class="uc-welcome">
+              <div class="wi">📋</div>
+              <p>Selecciona un caso de uso<br>de la barra lateral para ver su detalle completo</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 1: CLASES -->
+    <div class="exp-panel" id="exp-tab-1">
+      <div class="exp-layout">
+        <div class="exp-sidebar">
+          <div class="exp-list-section">Por Módulo</div>
+          <ul class="exp-diagram-list">
+            <li class="active" onclick="showDiagramPane('exp-tab-1','clase-m1',this)">👥 Usuarios y Perfiles</li>
+            <li onclick="showDiagramPane('exp-tab-1','clase-m2',this)">📚 Monitorias</li>
+            <li onclick="showDiagramPane('exp-tab-1','clase-m3',this)">🏫 Tutorías</li>
+            <li onclick="showDiagramPane('exp-tab-1','clase-m4',this)">⭐ Evaluación y Ranking</li>
+            <li onclick="showDiagramPane('exp-tab-1','clase-m5',this)">💬 Comunicación</li>
+          </ul>
+          <div class="exp-list-section">Vista General</div>
+          <ul class="exp-diagram-list">
+            <li onclick="showDiagramPane('exp-tab-1','clase-completo',this)">📊 Diagrama Completo</li>
+          </ul>
+        </div>
+        <div class="exp-main-area">
+          <div id="clase-m1" class="exp-diagram-pane active">
+            <div class="exp-diag-header"><h4>Módulo 1 — Usuarios y Perfiles</h4><p>Modelo central: AbstractUser extendido con perfiles por rol (relación 1:1)</p></div>
+            <div class="mermaid">
+classDiagram
+    class Usuario {
+        +id BigInt
+        +email EmailField
+        +nombre CharField
+        +rol CharField
+        +is_active BooleanField
+        +date_joined DateTimeField
+    }
+    class PerfilEstudiante {
+        +programa CharField
+        +semestre IntegerField
+        +promedio DecimalField
+    }
+    class PerfilMonitor {
+        +bio TextField
+        +aprobado BooleanField
+        +fecha_aprobacion DateField
+        +puntuacion_hake FloatField
+        +total_sesiones IntegerField
+        +estrellas FloatField
+    }
+    class PerfilDocente {
+        +titulo CharField
+        +departamento CharField
+        +foto ImageField
+    }
+    Usuario "1" --> "0..1" PerfilEstudiante : tiene
+    Usuario "1" --> "0..1" PerfilMonitor : tiene
+    Usuario "1" --> "0..1" PerfilDocente : tiene
+            </div>
+          </div>
+          <div id="clase-m2" class="exp-diagram-pane">
+            <div class="exp-diag-header"><h4>Módulo 2 — Monitorias</h4><p>Flujo estudiante → monitor: disponibilidad, solicitud, sesión</p></div>
+            <div class="mermaid">
+classDiagram
+    class PerfilMonitor {
+        +aprobado BooleanField
+        +puntuacion_hake FloatField
+    }
+    class Materia {
+        +nombre CharField
+        +codigo CharField
+        +creditos IntegerField
+    }
+    class DisponibilidadMonitor {
+        +dia_semana CharField
+        +hora_inicio TimeField
+        +hora_fin TimeField
+        +modalidad CharField
+        +activo BooleanField
+    }
+    class SolicitudMonitoria {
+        +nota_inicial DecimalField
+        +nota_corte_actual DecimalField
+        +estado CharField
+        +fecha_creacion DateTimeField
+        +notas TextField
+    }
+    class Sesion {
+        +fecha DateField
+        +hora_inicio TimeField
+        +hora_fin TimeField
+        +estado CharField
+    }
+    PerfilMonitor "1" --> "0..*" Materia : ensenha
+    PerfilMonitor "1" --> "0..*" DisponibilidadMonitor : tiene
+    PerfilMonitor "1" --> "0..*" SolicitudMonitoria : recibe
+    SolicitudMonitoria "0..*" --> "1" Materia : es de
+    SolicitudMonitoria "1" --> "0..*" Sesion : genera
+            </div>
+          </div>
+          <div id="clase-m3" class="exp-diagram-pane">
+            <div class="exp-diag-header"><h4>Módulo 3 — Tutorías</h4><p>Flujo estudiante → docente: disponibilidad, solicitud, sesión</p></div>
+            <div class="mermaid">
+classDiagram
+    class PerfilDocente {
+        +titulo CharField
+        +departamento CharField
+    }
+    class Materia {
+        +nombre CharField
+        +codigo CharField
+    }
+    class DisponibilidadDocente {
+        +dia_semana CharField
+        +hora_inicio TimeField
+        +hora_fin TimeField
+        +modalidad CharField
+        +ubicacion CharField
+        +activo BooleanField
+    }
+    class SolicitudTutoria {
+        +nota_inicial DecimalField
+        +nota_corte_actual DecimalField
+        +estado CharField
+        +fecha_creacion DateTimeField
+        +notas TextField
+    }
+    class Sesion {
+        +fecha DateField
+        +hora_inicio TimeField
+        +estado CharField
+    }
+    PerfilDocente "1" --> "0..*" DisponibilidadDocente : publica
+    PerfilDocente "1" --> "0..*" SolicitudTutoria : recibe
+    DisponibilidadDocente "0..*" --> "0..1" Materia : para
+    SolicitudTutoria "0..*" --> "1" Materia : es de
+    SolicitudTutoria "1" --> "0..*" Sesion : genera
+            </div>
+          </div>
+          <div id="clase-m4" class="exp-diagram-pane">
+            <div class="exp-diag-header"><h4>Módulo 4 — Evaluación y Ranking</h4><p>Sistema Hake: calificación emitida por estudiante, recibida por monitor</p></div>
+            <div class="mermaid">
+classDiagram
+    class PerfilEstudiante {
+        +programa CharField
+        +promedio DecimalField
+    }
+    class PerfilMonitor {
+        +puntuacion_hake FloatField
+        +total_sesiones IntegerField
+        +estrellas FloatField
+    }
+    class Calificacion {
+        +nota_inicial DecimalField
+        +nota_final DecimalField
+        +ganancia_hake FloatField
+        +estrellas IntegerField
+        +comentario TextField
+        +fecha DateTimeField
+    }
+    PerfilEstudiante "1" --> "0..*" Calificacion : emite
+    PerfilMonitor "1" --> "0..*" Calificacion : recibe
+            </div>
+          </div>
+          <div id="clase-m5" class="exp-diagram-pane">
+            <div class="exp-diag-header"><h4>Módulo 5 — Comunicación</h4><p>Mensajería asíncrona por solicitud y notificaciones internas</p></div>
+            <div class="mermaid">
+classDiagram
+    class Usuario {
+        +email EmailField
+        +rol CharField
+    }
+    class SolicitudMonitoria {
+        +estado CharField
+    }
+    class Mensaje {
+        +contenido TextField
+        +fecha_envio DateTimeField
+        +leido BooleanField
+    }
+    class Notificacion {
+        +tipo CharField
+        +mensaje TextField
+        +leida BooleanField
+        +fecha DateTimeField
+    }
+    SolicitudMonitoria "1" --> "0..*" Mensaje : contiene
+    Usuario "1" --> "0..*" Notificacion : recibe
+            </div>
+          </div>
+          <div id="clase-completo" class="exp-diagram-pane">
+            <div class="exp-diag-header"><h4>Diagrama Completo — Todas las Entidades</h4><p>Vista consolidada del modelo de datos completo de MonitorHub USB (12 entidades)</p></div>
+            <div class="mermaid">
+classDiagram
+    class Usuario { +email +nombre +rol }
+    class PerfilEstudiante { +programa +semestre +promedio }
+    class PerfilMonitor { +aprobado +puntuacion_hake +estrellas }
+    class PerfilDocente { +titulo +departamento }
+    class Materia { +nombre +codigo +creditos }
+    class DisponibilidadMonitor { +dia_semana +hora_inicio +hora_fin +modalidad }
+    class DisponibilidadDocente { +dia_semana +hora_inicio +hora_fin +ubicacion }
+    class SolicitudMonitoria { +nota_inicial +nota_corte_actual +estado }
+    class SolicitudTutoria { +nota_inicial +nota_corte_actual +estado }
+    class Sesion { +fecha +hora_inicio +hora_fin +estado }
+    class Calificacion { +nota_final +ganancia_hake +estrellas }
+    class Mensaje { +contenido +fecha_envio +leido }
+    class Notificacion { +tipo +mensaje +leida }
+    Usuario --> PerfilEstudiante
+    Usuario --> PerfilMonitor
+    Usuario --> PerfilDocente
+    PerfilMonitor --> Materia
+    PerfilMonitor --> DisponibilidadMonitor
+    PerfilMonitor --> SolicitudMonitoria
+    PerfilDocente --> DisponibilidadDocente
+    PerfilDocente --> SolicitudTutoria
+    PerfilEstudiante --> SolicitudMonitoria
+    PerfilEstudiante --> SolicitudTutoria
+    PerfilEstudiante --> Calificacion
+    PerfilMonitor --> Calificacion
+    SolicitudMonitoria --> Materia
+    SolicitudTutoria --> Materia
+    SolicitudMonitoria --> Sesion
+    SolicitudTutoria --> Sesion
+    SolicitudMonitoria --> Mensaje
+    Usuario --> Notificacion
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: SECUENCIA -->
+    <div class="exp-panel" id="exp-tab-2">
+      <div class="exp-layout">
+        <div class="exp-sidebar">
+          <div class="exp-list-section">Autenticación</div>
+          <ul class="exp-diagram-list">
+            <li class="active" onclick="showDiagramPane('exp-tab-2','ds01',this)">DS-01 · Inicio de sesión</li>
+          </ul>
+          <div class="exp-list-section">Monitorias</div>
+          <ul class="exp-diagram-list">
+            <li onclick="showDiagramPane('exp-tab-2','ds02',this)">DS-02 · Búsqueda y solicitud</li>
+            <li onclick="showDiagramPane('exp-tab-2','ds03',this)">DS-03 · Aceptar / rechazar solicitud</li>
+            <li onclick="showDiagramPane('exp-tab-2','ds04',this)">DS-04 · Mensajes usuario-monitor</li>
+            <li onclick="showDiagramPane('exp-tab-2','ds05',this)">DS-05 · Calificación de monitor</li>
+          </ul>
+          <div class="exp-list-section">Tutorías</div>
+          <ul class="exp-diagram-list">
+            <li onclick="showDiagramPane('exp-tab-2','ds06',this)">DS-06 · Publicar disponibilidad</li>
+            <li onclick="showDiagramPane('exp-tab-2','ds07',this)">DS-07 · Solicitar tutoría</li>
+            <li onclick="showDiagramPane('exp-tab-2','ds08',this)">DS-08 · Aceptar / rechazar tutoría</li>
+          </ul>
+          <div class="exp-list-section">Administración</div>
+          <ul class="exp-diagram-list">
+            <li onclick="showDiagramPane('exp-tab-2','ds09',this)">DS-09 · Aprobación de monitor</li>
+            <li onclick="showDiagramPane('exp-tab-2','ds10',this)">DS-10 · Gestión usuarios y materias</li>
+          </ul>
+          <div class="exp-list-section">Notificaciones</div>
+          <ul class="exp-diagram-list">
+            <li onclick="showDiagramPane('exp-tab-2','ds11',this)">DS-11 · Generación y entrega</li>
+          </ul>
+        </div>
+        <div class="exp-main-area">
+          <div id="ds01" class="exp-diagram-pane active">
+            <div class="exp-diag-header"><h4>DS-01 — Inicio de Sesión</h4><p>Autenticación con correo @unisimon.edu.co. Redirección según rol del usuario.</p></div>
+            <div class="mermaid">
+sequenceDiagram
+    actor U as Usuario
+    participant APP as App Web
+    participant BD as Base de Datos
+    U->>APP: GET /login/
+    APP-->>U: Formulario de login
+    U->>APP: POST email + contrasena
+    APP->>BD: SELECT Usuario WHERE email=?
+    BD-->>APP: Usuario encontrado
+    APP->>APP: Verifica contrasena hash
+    alt Credenciales válidas
+        APP->>APP: Crea sesion SESSION_KEY
+        APP-->>U: Redirige a dashboard segun rol
+    else Credenciales invalidas
+        APP-->>U: Error Credenciales incorrectas
+    end
+            </div>
+          </div>
+          <div id="ds02" class="exp-diagram-pane">
+            <div class="exp-diag-header"><h4>DS-02 — Búsqueda y Solicitud de Monitoria</h4><p>Estudiante busca monitor por materia y envía solicitud con nota inicial.</p></div>
+            <div class="mermaid">
+sequenceDiagram
+    actor EST as Estudiante
+    participant APP as App Web
+    participant BD as Base de Datos
+    EST->>APP: GET /monitores/?materia=X
+    APP->>BD: SELECT PerfilMonitor aprobado=True
+    BD-->>APP: Lista de monitores
+    APP-->>EST: Lista con horarios disponibles
+    EST->>APP: GET /monitores/detalle/id/
+    APP->>BD: SELECT PerfilMonitor + DisponibilidadMonitor
+    BD-->>APP: Perfil completo
+    APP-->>EST: Perfil del monitor
+    EST->>APP: POST /solicitudes/nueva/ materia nota_inicial notas
+    APP->>BD: INSERT SolicitudMonitoria estado=PENDIENTE
+    BD-->>APP: Solicitud creada
+    APP->>BD: INSERT Notificacion para monitor
+    BD-->>APP: OK
+    APP-->>EST: Solicitud enviada exitosamente
+            </div>
+          </div>
+          <div id="ds03" class="exp-diagram-pane">
+            <div class="exp-diag-header"><h4>DS-03 — Aceptar / Rechazar Solicitud de Monitoria</h4><p>Monitor gestiona solicitudes pendientes y programa la sesión correspondiente.</p></div>
+            <div class="mermaid">
+sequenceDiagram
+    actor MON as Monitor
+    participant APP as App Web
+    participant BD as Base de Datos
+    actor EST as Estudiante
+    MON->>APP: GET /solicitudes/recibidas/
+    APP->>BD: SELECT SolicitudMonitoria estado=PENDIENTE
+    BD-->>APP: Lista de solicitudes
+    APP-->>MON: Solicitudes pendientes
+    MON->>APP: POST /solicitudes/id/responder/ accion=ACEPTAR
+    APP->>BD: UPDATE SolicitudMonitoria estado=ACEPTADA
+    BD-->>APP: OK
+    APP->>BD: INSERT Sesion fecha hora modalidad
+    BD-->>APP: Sesion creada
+    APP->>BD: INSERT Notificacion para estudiante
+    BD-->>APP: OK
+    APP-->>MON: Solicitud aceptada
+    note over EST: Recibe notificacion de aceptacion
+            </div>
+          </div>
+          <div id="ds04" class="exp-diagram-pane">
+            <div class="exp-diag-header"><h4>DS-04 — Mensajes entre Estudiante y Monitor</h4><p>Buzón asíncrono de mensajes asociado a una solicitud de monitoria activa.</p></div>
+            <div class="mermaid">
+sequenceDiagram
+    actor EST as Estudiante
+    participant APP as App Web
+    participant BD as Base de Datos
+    actor MON as Monitor
+    EST->>APP: GET /mensajes/bandeja/
+    APP->>BD: SELECT Mensaje WHERE solicitud.estudiante=EST
+    BD-->>APP: Conversaciones activas
+    APP-->>EST: Bandeja de mensajes
+    EST->>APP: POST /mensajes/enviar/ solicitud_id contenido
+    APP->>BD: INSERT Mensaje leido=False
+    BD-->>APP: Mensaje guardado
+    APP->>BD: INSERT Notificacion para monitor
+    BD-->>APP: OK
+    APP-->>EST: Mensaje enviado
+    MON->>APP: GET /mensajes/bandeja/
+    APP->>BD: SELECT mensajes no leidos destinatario=MON
+    BD-->>APP: Mensajes nuevos
+    APP-->>MON: Conversacion con estudiante
+            </div>
+          </div>
+          <div id="ds05" class="exp-diagram-pane">
+            <div class="exp-diag-header"><h4>DS-05 — Calificación de Monitor (Sistema Hake)</h4><p>Estudiante califica al monitor. El sistema calcula la ganancia normalizada de Hake.</p></div>
+            <div class="mermaid">
+sequenceDiagram
+    actor EST as Estudiante
+    participant APP as App Web
+    participant BD as Base de Datos
+    EST->>APP: GET /calificaciones/pendientes/
+    APP->>BD: SELECT Sesion COMPLETADA sin calificacion
+    BD-->>APP: Sesiones disponibles
+    APP-->>EST: Lista para calificar
+    EST->>APP: POST /calificar/id/ nota_final estrellas comentario
+    APP->>APP: g = (nota_final - nota_inicial) / (5.0 - nota_inicial)
+    APP->>BD: INSERT Calificacion nota_final ganancia_hake estrellas
+    BD-->>APP: Calificacion guardada
+    APP->>BD: UPDATE PerfilMonitor puntuacion_hake estrellas total_sesiones
+    BD-->>APP: Perfil actualizado
+    APP->>BD: INSERT Notificacion para monitor
+    BD-->>APP: OK
+    APP-->>EST: Calificacion enviada exitosamente
+            </div>
+          </div>
+          <div id="ds06" class="exp-diagram-pane">
+            <div class="exp-diag-header"><h4>DS-06 — Publicar Disponibilidad de Tutoría</h4><p>Docente registra sus franjas horarias disponibles para sesiones de tutoría.</p></div>
+            <div class="mermaid">
+sequenceDiagram
+    actor DOC as Docente
+    participant APP as App Web
+    participant BD as Base de Datos
+    DOC->>APP: GET /sesiones/disponibilidad/
+    APP->>BD: SELECT DisponibilidadDocente WHERE docente=DOC
+    BD-->>APP: Horarios actuales
+    APP-->>DOC: Horarios y formulario de nueva franja
+    DOC->>APP: POST /sesiones/disponibilidad/nueva/ dia hora_inicio hora_fin modalidad ubicacion
+    APP->>BD: INSERT DisponibilidadDocente activo=True
+    BD-->>APP: Disponibilidad guardada
+    APP-->>DOC: Horario publicado exitosamente
+            </div>
+          </div>
+          <div id="ds07" class="exp-diagram-pane">
+            <div class="exp-diag-header"><h4>DS-07 — Solicitar Tutoría a Docente</h4><p>Estudiante consulta docentes con disponibilidad activa y envía solicitud de tutoría.</p></div>
+            <div class="mermaid">
+sequenceDiagram
+    actor EST as Estudiante
+    participant APP as App Web
+    participant BD as Base de Datos
+    EST->>APP: GET /solicitudes/docentes/
+    APP->>BD: SELECT PerfilDocente con DisponibilidadDocente activa
+    BD-->>APP: Docentes disponibles
+    APP-->>EST: Lista de docentes y horarios
+    EST->>APP: POST /solicitudes/tutoria/nueva/ docente_id materia_id nota_inicial notas
+    APP->>BD: INSERT SolicitudTutoria estado=PENDIENTE
+    BD-->>APP: Solicitud creada
+    APP->>BD: INSERT Notificacion para docente
+    BD-->>APP: OK
+    APP-->>EST: Solicitud de tutoria enviada
+            </div>
+          </div>
+          <div id="ds08" class="exp-diagram-pane">
+            <div class="exp-diag-header"><h4>DS-08 — Aceptar / Rechazar Solicitud de Tutoría</h4><p>Docente revisa solicitudes de tutoría pendientes y programa la sesión.</p></div>
+            <div class="mermaid">
+sequenceDiagram
+    actor DOC as Docente
+    participant APP as App Web
+    participant BD as Base de Datos
+    actor EST as Estudiante
+    DOC->>APP: GET /solicitudes/tutoria/recibidas/
+    APP->>BD: SELECT SolicitudTutoria estado=PENDIENTE docente=DOC
+    BD-->>APP: Solicitudes pendientes
+    APP-->>DOC: Lista de solicitudes
+    DOC->>APP: POST /solicitudes/tutoria/id/responder/ accion=ACEPTAR
+    APP->>BD: UPDATE SolicitudTutoria estado=ACEPTADA
+    BD-->>APP: OK
+    APP->>BD: INSERT Sesion
+    BD-->>APP: Sesion creada
+    APP->>BD: INSERT Notificacion para estudiante
+    BD-->>APP: OK
+    APP-->>DOC: Tutoria aceptada y programada
+    note over EST: Recibe notificacion con detalles
+            </div>
+          </div>
+          <div id="ds09" class="exp-diagram-pane">
+            <div class="exp-diag-header"><h4>DS-09 — Aprobación de Monitor por Administrador</h4><p>Ciclo completo: solicitud del estudiante → revisión → aprobación del administrador.</p></div>
+            <div class="mermaid">
+sequenceDiagram
+    actor EST as Estudiante
+    participant APP as App Web
+    participant BD as Base de Datos
+    actor ADM as Administrador
+    EST->>APP: POST /monitores/solicitar/ materias bio
+    APP->>BD: INSERT PerfilMonitor aprobado=False
+    BD-->>APP: Perfil creado
+    APP->>BD: INSERT Notificacion para admin
+    BD-->>APP: OK
+    APP-->>EST: Solicitud pendiente de aprobacion
+    ADM->>APP: GET /admin/monitores/pendientes/
+    APP->>BD: SELECT PerfilMonitor WHERE aprobado=False
+    BD-->>APP: Lista de solicitudes
+    APP-->>ADM: Perfiles pendientes
+    ADM->>APP: POST /admin/monitores/id/aprobar/
+    APP->>BD: UPDATE PerfilMonitor aprobado=True
+    BD-->>APP: OK
+    APP->>BD: INSERT Notificacion para estudiante
+    BD-->>APP: OK
+    APP-->>ADM: Monitor aprobado exitosamente
+            </div>
+          </div>
+          <div id="ds10" class="exp-diagram-pane">
+            <div class="exp-diag-header"><h4>DS-10 — Gestión de Usuarios y Materias</h4><p>Administrador gestiona el catálogo del sistema desde el panel de administración.</p></div>
+            <div class="mermaid">
+sequenceDiagram
+    actor ADM as Administrador
+    participant APP as App Web
+    participant BD as Base de Datos
+    ADM->>APP: GET /admin/usuarios/
+    APP->>BD: SELECT all Usuarios
+    BD-->>APP: Lista completa
+    APP-->>ADM: Panel de gestion
+    ADM->>APP: POST /admin/materias/nueva/ nombre codigo creditos
+    APP->>BD: INSERT Materia
+    BD-->>APP: Materia creada
+    APP-->>ADM: Confirmacion
+    ADM->>APP: POST /admin/usuarios/id/desactivar/
+    APP->>BD: UPDATE Usuario is_active=False
+    BD-->>APP: OK
+    APP-->>ADM: Usuario desactivado
+            </div>
+          </div>
+          <div id="ds11" class="exp-diagram-pane">
+            <div class="exp-diag-header"><h4>DS-11 — Generación y Entrega de Notificaciones</h4><p>Notificaciones internas generadas por eventos del sistema con polling cada 5 segundos.</p></div>
+            <div class="mermaid">
+sequenceDiagram
+    participant SYS as Sistema
+    participant BD as Base de Datos
+    actor U as Usuario
+    participant JS as JavaScript Browser
+    SYS->>BD: INSERT Notificacion usuario tipo mensaje leida=False
+    BD-->>SYS: OK
+    loop Polling cada 5 segundos
+        JS->>APP: GET /notificaciones/no-leidas/
+        APP->>BD: SELECT Notificacion leida=False usuario=U
+        BD-->>APP: Notificaciones pendientes
+        APP-->>JS: JSON con notificaciones
+        JS->>U: Muestra Toast Bootstrap
+    end
+    U->>APP: POST /notificaciones/id/marcar-leida/
+    APP->>BD: UPDATE Notificacion leida=True
+    BD-->>APP: OK
+    APP-->>U: Marcada como leida
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: COMPONENTES -->
+    <div class="exp-panel" id="exp-tab-3">
+      <div class="exp-layout">
+        <div class="exp-sidebar">
+          <div class="exp-list-section">Diagramas</div>
+          <ul class="exp-diagram-list">
+            <li class="active" onclick="showDiagramPane('exp-tab-3','dc01',this)">DC-01 · Arquitectura General</li>
+            <li onclick="showDiagramPane('exp-tab-3','dc02',this)">DC-02 · Despliegue por Entornos</li>
+          </ul>
+        </div>
+        <div class="exp-main-area">
+          <div id="dc01" class="exp-diagram-pane active">
+            <div class="exp-diag-header"><h4>DC-01 — Arquitectura General</h4><p>Componentes del sistema y sus relaciones técnicas en el entorno Vercel + Neon.</p></div>
+            <div class="mermaid">
+graph TB
+    CLI["Browser\nCliente Web"]
+    subgraph VERCEL["Vercel — Serverless"]
+        FE["Frontend\nBootstrap 5.3 + Bootstrap Icons"]
+        BE["Backend\nDjango 4.2 + Daphne ASGI"]
+        CH["Django Channels\nWebSocket"]
+    end
+    NEON[("PostgreSQL\nNeon — Serverless")]
+    MYSQL[("MySQL\nServidor USB — Produccion")]
+    REDIS["Redis\nChannel Layer"]
+    AZURE["Azure AD\nOAuth 2.0"]
+    GRAPH["Microsoft Graph API\nCorreo / Teams"]
+    CLI -->|HTTPS| FE
+    FE -->|HTTP WSGI| BE
+    CLI -->|WSS| CH
+    CH -->|Channel Layer| REDIS
+    BE -->|psycopg2 SSL| NEON
+    BE -.->|pymysql| MYSQL
+    BE -->|MSAL| AZURE
+    BE -->|requests| GRAPH
+            </div>
+          </div>
+          <div id="dc02" class="exp-diagram-pane">
+            <div class="exp-diag-header"><h4>DC-02 — Despliegue por Entornos</h4><p>Configuración de base de datos y servicios según el entorno de ejecución del sistema.</p></div>
+            <div class="mermaid">
+graph LR
+    subgraph DEV["Desarrollo Local"]
+        D1["Django\nrunserver 8001"]
+        D2[("SQLite\ndb.sqlite3")]
+        D3["Redis\nlocalhost:6379"]
+        D1 --- D2
+        D1 --- D3
+    end
+    subgraph PROD_V["Vercel — Demo y Evaluacion"]
+        V1["Django + Daphne\nServerless Functions"]
+        V2[("PostgreSQL\nNeon — us-east-1")]
+        V1 --- V2
+    end
+    subgraph PROD_U["Servidor USB — Produccion"]
+        U1["Django + Daphne\n+ Nginx"]
+        U2[("MySQL\nServidor Universitario")]
+        U3["Redis"]
+        U4["Azure AD\nMicrosoft 365"]
+        U1 --- U2
+        U1 --- U3
+        U1 --- U4
+    end
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+    var UC = {
+      uc01:{id:'CU-01',name:'Iniciar Sesión',actor:'Estudiante, Monitor, Docente, Administrador',pre:'El usuario no está autenticado en el sistema',main:['Usuario accede a /login/','Sistema muestra formulario con campo email y contraseña','Usuario ingresa correo @unisimon.edu.co y su contraseña','Sistema valida las credenciales contra la base de datos','Sistema crea sesión y redirige al dashboard según el rol'],alt:'Si el usuario ya tiene sesión activa, el sistema redirige directamente a su dashboard',post:'Sesión activa. Usuario redirigido al dashboard personalizado según su rol',exc:'Credenciales inválidas: mensaje de error. Correo sin dominio @unisimon.edu.co: acceso denegado'},
+      uc02:{id:'CU-02',name:'Cerrar Sesión',actor:'Estudiante, Monitor, Docente, Administrador',pre:'El usuario tiene una sesión activa',main:['Usuario hace clic en Cerrar sesión','Sistema invalida la sesión del usuario','Sistema elimina las cookies de sesión','Sistema redirige a /login/'],alt:'No aplica',post:'Sesión terminada. Usuario redirigido a la pantalla de login',exc:'Si la sesión ya había expirado, el sistema redirige igualmente a /login/'},
+      uc03:{id:'CU-03',name:'Buscar Monitores',actor:'Estudiante, Monitor (doble perfil)',pre:'Usuario autenticado con rol Estudiante o Monitor',main:['Usuario accede a /monitores/','Sistema muestra lista de monitores aprobados','Usuario puede filtrar por materia, nombre o disponibilidad','Sistema actualiza la lista según filtros','Usuario puede ver la vista previa de cada monitor'],alt:'Si no hay monitores para el filtro, el sistema muestra mensaje informativo',post:'Usuario visualiza lista filtrada de monitores con información básica',exc:'Sin conexión a la base de datos: error 500'},
+      uc04:{id:'CU-04',name:'Ver Perfil de Monitor',actor:'Estudiante',pre:'Usuario autenticado. Monitor aprobado y activo',main:['Usuario hace clic en un monitor de la lista','Sistema carga /monitores/detalle/id/','Sistema muestra: nombre, materias, bio, disponibilidad, ranking Hake, estrellas y número de sesiones'],alt:'Si el monitor fue desaprobado, el sistema redirige con aviso',post:'Usuario visualiza el perfil completo del monitor con ranking y disponibilidad',exc:'ID de monitor no existe: error 404'},
+      uc05:{id:'CU-05',name:'Solicitar Monitoría',actor:'Estudiante',pre:'Usuario autenticado como Estudiante. Monitor aprobado y activo',main:['Desde el perfil del monitor, usuario hace clic en Solicitar monitoría','Sistema muestra formulario: materia, nota inicial, nota de corte, notas adicionales','Usuario completa el formulario y envía','Sistema crea la solicitud con estado PENDIENTE','Sistema notifica al monitor de la nueva solicitud'],alt:'Si ya existe solicitud activa con el mismo monitor y materia, sistema muestra aviso',post:'SolicitudMonitoria creada con estado PENDIENTE. Monitor notificado',exc:'Campos requeridos vacíos: el sistema muestra errores de validación'},
+      uc06:{id:'CU-06',name:'Enviar Mensaje al Monitor',actor:'Estudiante',pre:'Existe una SolicitudMonitoria activa entre el estudiante y el monitor',main:['Usuario accede a /mensajes/bandeja/','Sistema muestra conversaciones activas por solicitud','Usuario selecciona una conversación y escribe su mensaje','Usuario envía el mensaje','Sistema guarda el mensaje y notifica al monitor'],alt:'Si no hay solicitudes activas, la bandeja se muestra vacía',post:'Mensaje guardado en BD. Monitor notificado de nuevo mensaje',exc:'Mensaje vacío: el sistema no permite enviar'},
+      uc07:{id:'CU-07',name:'Calificar Monitor',actor:'Estudiante',pre:'Existe una sesión completada sin calificación previa',main:['Usuario accede a /calificaciones/pendientes/','Sistema muestra sesiones completadas sin calificar','Usuario completa: nota final, estrellas (1-5), comentario','Sistema calcula ganancia Hake: g = (nota_final - nota_inicial) / (5.0 - nota_inicial)','Sistema guarda la calificación y actualiza el perfil del monitor'],alt:'Si ya existe calificación para esa sesión, el sistema no permite calificar nuevamente',post:'Calificacion guardada. PerfilMonitor actualizado con nueva puntuación Hake y estrellas',exc:'nota_inicial = 5.0: división por cero prevenida por validación del sistema'},
+      uc08:{id:'CU-08',name:'Solicitar Tutoría a Docente',actor:'Estudiante',pre:'Usuario autenticado como Estudiante. Docente tiene disponibilidad activa',main:['Usuario accede a /solicitudes/docentes/','Sistema muestra docentes con disponibilidad activa y horarios','Usuario selecciona docente y completa: materia, nota inicial, notas','Sistema crea la solicitud con estado PENDIENTE','Sistema notifica al docente'],alt:'Si el docente no tiene disponibilidad activa, no aparece en la lista',post:'SolicitudTutoria creada con estado PENDIENTE. Docente notificado',exc:'Campos requeridos vacíos: el sistema muestra errores de validación'},
+      uc09:{id:'CU-09',name:'Ver Mis Solicitudes',actor:'Estudiante',pre:'Usuario autenticado como Estudiante',main:['Usuario accede a /solicitudes/mis-solicitudes/','Sistema consulta todas las solicitudes del estudiante (monitoria y tutoría)','Sistema muestra historial con estado de cada solicitud','Usuario puede ver el detalle de cualquier solicitud'],alt:'Si no tiene solicitudes, el sistema muestra mensaje informativo',post:'Usuario visualiza el historial completo de sus solicitudes con estado actualizado',exc:'Sin conexión: error 500'},
+      uc10:{id:'CU-10',name:'Iniciar Sesión (Monitor)',actor:'Monitor',pre:'El usuario tiene perfil de Monitor aprobado en el sistema',main:['Monitor accede a /login/ con su correo @unisimon.edu.co','Sistema valida credenciales','Sistema detecta que el usuario tiene perfil Monitor aprobado','Sistema redirige al dashboard_monitor con su panel de gestión'],alt:'Si el perfil de monitor no está aprobado, el sistema redirige al dashboard de estudiante',post:'Monitor autenticado con acceso a su panel de solicitudes, disponibilidad y ranking',exc:'Credenciales inválidas: mensaje de error'},
+      uc11:{id:'CU-11',name:'Ver Solicitudes Recibidas',actor:'Monitor',pre:'Usuario autenticado como Monitor aprobado',main:['Monitor accede a /solicitudes/recibidas/','Sistema consulta SolicitudMonitoria WHERE monitor=actual','Sistema muestra solicitudes agrupadas por estado','Monitor puede ver el detalle de cada solicitud'],alt:'Si no hay solicitudes, el sistema muestra panel vacío',post:'Monitor visualiza todas sus solicitudes con estado e información del estudiante',exc:'Sin conexión: error 500'},
+      uc12:{id:'CU-12',name:'Aceptar / Rechazar Solicitud',actor:'Monitor',pre:'Existe al menos una SolicitudMonitoria con estado PENDIENTE para el monitor',main:['Monitor selecciona una solicitud pendiente','Sistema muestra detalle de la solicitud','Monitor elige Aceptar o Rechazar','Si acepta: sistema actualiza estado a ACEPTADA y crea una Sesion programada','Si rechaza: sistema actualiza estado a RECHAZADA','Sistema notifica al estudiante del resultado'],alt:'Monitor puede agregar un mensaje al rechazar para dar contexto',post:'SolicitudMonitoria actualizada. Si aceptada: Sesion creada. Estudiante notificado',exc:'Solicitud ya procesada por concurrencia: el sistema muestra error de estado'},
+      uc13:{id:'CU-13',name:'Gestionar Disponibilidad',actor:'Monitor',pre:'Usuario autenticado como Monitor aprobado',main:['Monitor accede a /monitores/disponibilidad/','Sistema muestra horarios actuales del monitor','Monitor puede crear nuevas franjas: día, hora inicio, hora fin, modalidad','Monitor puede desactivar o eliminar franjas existentes','Sistema guarda los cambios'],alt:'Si una franja tiene sesiones programadas y se desactiva, el sistema avisa',post:'DisponibilidadMonitor actualizada. Cambios visibles para estudiantes de inmediato',exc:'Franja con hora_inicio >= hora_fin: validación rechaza el formulario'},
+      uc14:{id:'CU-14',name:'Ver Ranking Hake Propio',actor:'Monitor',pre:'Usuario autenticado como Monitor con al menos una calificación recibida',main:['Monitor accede a su dashboard','Sistema calcula y muestra: puntuación Hake promedio, estrellas, total de sesiones','Sistema muestra historial de calificaciones recibidas con detalle por estudiante'],alt:'Sin calificaciones: el sistema muestra panel con mensaje informativo',post:'Monitor visualiza sus métricas de desempeño actualizadas',exc:'Sin conexión: error 500'},
+      uc15:{id:'CU-15',name:'Ver Mensajes de Estudiantes',actor:'Monitor',pre:'Usuario autenticado como Monitor',main:['Monitor accede a /mensajes/bandeja/','Sistema muestra conversaciones de solicitudes aceptadas','Monitor selecciona una conversación','Sistema muestra el hilo de mensajes','Monitor puede responder al estudiante'],alt:'Si no hay mensajes, el sistema muestra la bandeja vacía',post:'Monitor visualiza y puede responder todos los mensajes pendientes',exc:'Mensaje vacío: no se puede enviar'},
+      uc16:{id:'CU-16',name:'Solicitar Monitoría (Doble Perfil)',actor:'Monitor como Estudiante',pre:'Usuario con perfil Monitor también tiene perfil Estudiante activo',main:['Monitor accede al modo estudiante de su perfil','Sistema muestra la búsqueda de monitores para otras materias','Monitor-estudiante busca un monitor de otra materia y solicita monitoría','Sistema crea la solicitud igual que para cualquier estudiante'],alt:'El monitor no puede solicitar monitoría en materias donde él mismo es monitor',post:'SolicitudMonitoria creada. El monitor actúa como estudiante en esta solicitud',exc:'Intento de solicitar a sí mismo: el sistema lo previene con validación'},
+      uc17:{id:'CU-17',name:'Iniciar Sesión (Docente)',actor:'Docente',pre:'El usuario tiene perfil de Docente registrado en el sistema',main:['Docente accede a /login/ con correo @unisimon.edu.co','Sistema valida credenciales','Sistema detecta rol Docente','Sistema redirige al dashboard_docente con sus paneles de tutoría y supervisión'],alt:'No aplica',post:'Docente autenticado con acceso a panel de disponibilidad, tutorías y supervisión',exc:'Credenciales inválidas: mensaje de error'},
+      uc18:{id:'CU-18',name:'Publicar Disponibilidad de Tutoría',actor:'Docente',pre:'Usuario autenticado como Docente',main:['Docente accede a /sesiones/disponibilidad/','Sistema muestra horarios registrados y formulario','Docente completa: día, hora inicio, hora fin, modalidad (PRESENCIAL/VIRTUAL/AMBAS), ubicación, materia (opcional)','Sistema guarda la franja con activo=True'],alt:'Docente puede editar o desactivar franjas existentes',post:'DisponibilidadDocente creada y visible para estudiantes al buscar tutorías',exc:'hora_inicio >= hora_fin: validación rechaza el formulario'},
+      uc19:{id:'CU-19',name:'Ver Solicitudes de Tutoría',actor:'Docente',pre:'Usuario autenticado como Docente',main:['Docente accede a /solicitudes/tutoria/recibidas/','Sistema consulta SolicitudTutoria WHERE docente=actual','Sistema muestra solicitudes con estado, materia y nota inicial del estudiante','Docente puede ver el detalle de cada solicitud'],alt:'Sin solicitudes: panel vacío con mensaje informativo',post:'Docente visualiza todas las solicitudes de tutoría recibidas con estado actualizado',exc:'Sin conexión: error 500'},
+      uc20:{id:'CU-20',name:'Aceptar / Rechazar Tutoría',actor:'Docente',pre:'Existe una SolicitudTutoria con estado PENDIENTE para el docente',main:['Docente selecciona una solicitud pendiente','Docente elige Aceptar o Rechazar','Si acepta: sistema actualiza estado a ACEPTADA y crea Sesion','Si rechaza: estado cambia a RECHAZADA','Sistema notifica al estudiante del resultado'],alt:'Docente puede agregar mensaje de rechazo',post:'SolicitudTutoria actualizada. Si aceptada: Sesion creada. Estudiante notificado',exc:'Solicitud ya procesada: el sistema muestra error'},
+      uc21:{id:'CU-21',name:'Supervisar Monitores de Materia',actor:'Docente',pre:'Usuario autenticado como Docente con materias asignadas',main:['Docente accede a /monitores/supervisar/','Sistema muestra monitores de las materias del docente','Docente puede ver perfil, ranking, sesiones activas y calificaciones de cada monitor'],alt:'Si no hay monitores en sus materias, el sistema muestra mensaje',post:'Docente visualiza el estado de todos los monitores bajo su supervisión',exc:'Sin conexión: error 500'},
+      uc22:{id:'CU-22',name:'Ver Estadísticas de Monitores',actor:'Docente',pre:'Usuario autenticado como Docente con monitores activos en sus materias',main:['Desde el panel de supervisión, docente accede a estadísticas','Sistema muestra por monitor: promedio Hake, estrellas, número de sesiones, calificaciones','Sistema muestra el ranking comparativo entre monitores de la materia'],alt:'Sin datos: panel con gráficas vacías',post:'Docente visualiza métricas de desempeño de sus monitores',exc:'Sin conexión: error 500'},
+      uc23:{id:'CU-23',name:'Gestionar Perfil Docente',actor:'Docente',pre:'Usuario autenticado como Docente',main:['Docente accede a /perfil/','Sistema muestra datos actuales: nombre, título, departamento, foto','Docente actualiza los campos deseados','Sistema valida y guarda los cambios'],alt:'Si la imagen supera el tamaño permitido, Pillow la redimensiona automáticamente',post:'PerfilDocente actualizado. Los cambios son visibles en su perfil público',exc:'Formato de imagen no soportado: el sistema muestra error de validación'},
+      uc24:{id:'CU-24',name:'Aprobar Monitor',actor:'Administrador',pre:'Existe un PerfilMonitor con aprobado=False pendiente de revisión',main:['Admin accede a /admin/monitores/pendientes/','Sistema muestra lista de solicitudes pendientes con nombre, materias y bio','Admin revisa la solicitud y hace clic en Aprobar','Sistema actualiza PerfilMonitor aprobado=True','Sistema notifica al estudiante que fue aprobado como monitor'],alt:'Admin puede ver las calificaciones académicas del estudiante antes de aprobar',post:'PerfilMonitor aprobado=True. El monitor aparece en la lista de búsqueda para estudiantes',exc:'Sin conexión: error 500'},
+      uc25:{id:'CU-25',name:'Rechazar Monitor',actor:'Administrador',pre:'Existe un PerfilMonitor con aprobado=False pendiente de revisión',main:['Admin accede a la lista de solicitudes pendientes','Admin hace clic en Rechazar e ingresa motivo','Sistema actualiza PerfilMonitor con estado rechazado','Sistema notifica al estudiante con el motivo'],alt:'No aplica',post:'Solicitud rechazada. El estudiante recibe notificación con el motivo del rechazo',exc:'Motivo de rechazo vacío: el sistema puede requerirlo según configuración'},
+      uc26:{id:'CU-26',name:'Gestionar Usuarios',actor:'Administrador',pre:'Usuario autenticado como Administrador',main:['Admin accede a /admin/usuarios/ o al panel Django /admin/','Sistema muestra lista de todos los usuarios','Admin puede buscar, editar, activar o desactivar usuarios','Admin guarda los cambios'],alt:'Admin puede acceder a /admin/ Django para gestión avanzada directa',post:'Cambios aplicados en la BD. Los usuarios afectados lo ven en su próximo acceso',exc:'Intentar desactivar al propio administrador: el sistema puede prevenirlo'},
+      uc27:{id:'CU-27',name:'Gestionar Materias',actor:'Administrador',pre:'Usuario autenticado como Administrador',main:['Admin accede a /admin/materias/','Sistema muestra catálogo de materias','Admin puede crear, editar o desactivar materias (nombre, código, créditos, descripción)','Sistema guarda los cambios'],alt:'No se puede eliminar una materia que tiene monitores o solicitudes activas',post:'Catálogo de materias actualizado. Monitores pueden asociarse a las nuevas materias',exc:'Código de materia duplicado: error de validación por unique constraint'},
+      uc28:{id:'CU-28',name:'Ver Estadísticas Globales',actor:'Administrador',pre:'Usuario autenticado como Administrador',main:['Admin accede a su dashboard','Sistema muestra: total usuarios por rol, solicitudes activas, monitores activos, ranking global Hake','Sistema muestra gráficas de actividad del sistema'],alt:'Sin datos históricos: el sistema muestra contadores en cero',post:'Admin visualiza el estado global del sistema en tiempo real',exc:'Sin conexión: error 500'},
+      uc29:{id:'CU-29',name:'Acceder Panel Django /admin/',actor:'Administrador',pre:'Usuario con is_staff=True y is_superuser=True',main:['Admin accede a /admin/','Django muestra el panel de administración nativo','Admin puede gestionar cualquier modelo del sistema directamente','Admin guarda cambios directamente en la BD'],alt:'Desde /admin/ se puede hacer cualquier operación CRUD sobre todos los modelos',post:'Cambios aplicados directamente en la base de datos',exc:'Usuario sin is_staff=True: el sistema redirige a /login/'},
+      uc30:{id:'CU-30',name:'Ver Ranking Global de Monitores',actor:'Administrador',pre:'Usuario autenticado como Administrador',main:['Admin accede a /admin/ranking/','Sistema consulta todos los PerfilMonitor aprobados','Sistema los ordena por puntuacion_hake descendente','Admin visualiza el ranking con nombre, materias, puntuación Hake, estrellas y sesiones'],alt:'Admin puede filtrar por materia o período',post:'Admin visualiza el ranking completo de monitores con sus métricas de desempeño',exc:'Sin calificaciones en el sistema: todos los monitores aparecen con puntuación 0'}
+    };
+
+    function switchExpTab(idx){
+      document.querySelectorAll('.exp-main-tab').forEach(function(t,i){ t.classList.toggle('active',i===idx); });
+      document.querySelectorAll('.exp-panel').forEach(function(p,i){ p.classList.toggle('active',i===idx); });
+    }
+
+    function showUC(id,el){
+      document.querySelectorAll('#exp-tab-0 .exp-uc-list li').forEach(function(li){ li.classList.remove('active'); });
+      if(el) el.classList.add('active');
+      var uc=UC[id]; if(!uc) return;
+      var steps=uc.main.map(function(s){ return '<li>'+s+'</li>'; }).join('');
+      document.getElementById('uc-detail').innerHTML=
+        '<div class="uc-card">'+
+          '<div class="uc-card-header">'+
+            '<span class="uc-id-badge">'+uc.id+'</span>'+
+            '<span class="uc-card-title">'+uc.name+'</span>'+
+          '</div>'+
+          '<div class="uc-body">'+
+            '<div class="uc-row"><span class="uc-label">Actor(es)</span><span class="uc-value">'+uc.actor+'</span></div>'+
+            '<div class="uc-row"><span class="uc-label">Precondición</span><span class="uc-value">'+uc.pre+'</span></div>'+
+            '<div class="uc-row"><span class="uc-label">Flujo Principal</span><span class="uc-value"><ol>'+steps+'</ol></span></div>'+
+            '<div class="uc-row"><span class="uc-label">Flujo Alternativo</span><span class="uc-value">'+uc.alt+'</span></div>'+
+            '<div class="uc-row"><span class="uc-label">Postcondición</span><span class="uc-value">'+uc.post+'</span></div>'+
+            '<div class="uc-row"><span class="uc-label">Excepciones</span><span class="uc-value">'+uc.exc+'</span></div>'+
+          '</div>'+
+        '</div>';
+    }
+
+    function showDiagramPane(tabId,paneId,el){
+      var tab=document.getElementById(tabId);
+      tab.querySelectorAll('.exp-diagram-pane').forEach(function(p){ p.classList.remove('active'); });
+      tab.querySelectorAll('.exp-diagram-list li').forEach(function(li){ li.classList.remove('active'); });
+      var pane=document.getElementById(paneId);
+      if(pane) pane.classList.add('active');
+      if(el) el.classList.add('active');
+    }
+    </script>
+
   </section>
 
 </div>
