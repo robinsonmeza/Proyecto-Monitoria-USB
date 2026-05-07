@@ -1964,6 +1964,40 @@ vercel --prod</div>
       uc30:{id:'CU-30',name:'Ver Ranking Global de Monitores',actor:'Administrador',pre:'Usuario autenticado como Administrador',main:['Admin accede a /admin/ranking/','Sistema consulta todos los PerfilMonitor aprobados','Sistema los ordena por puntuacion_hake descendente','Admin visualiza el ranking con nombre, materias, puntuación Hake, estrellas y sesiones'],alt:'Admin puede filtrar por materia o período',post:'Admin visualiza el ranking completo de monitores con sus métricas de desempeño',exc:'Sin calificaciones en el sistema: todos los monitores aparecen con puntuación 0'}
     };
 
+    // Mapa uc-id → nombre del archivo PNG en static/img/diagramas/
+    var UC_IMG = {
+      uc01:'CU-01_Iniciar_Sesion.png',
+      uc02:'CU-02_Cerrar_Sesion.png',
+      uc03:'CU-03_Buscar_Monitores.png',
+      uc04:'CU-04_Ver_Perfil_Monitor.png',
+      uc05:'CU-05_Solicitar_Monitoria.png',
+      uc06:'CU-06_Enviar_Mensaje.png',
+      uc07:'CU-07_Calificar_Monitor.png',
+      uc08:'CU-08_Solicitar_Tutoria.png',
+      uc09:'CU-09_Ver_Mis_Solicitudes.png',
+      uc10:'CU-10_Iniciar_Sesion_Monitor.png',
+      uc11:'CU-11_Ver_Solicitudes_Recibidas.png',
+      uc12:'CU-12_Aceptar_Rechazar_Solicitud.png',
+      uc13:'CU-13_Gestionar_Disponibilidad.png',
+      uc14:'CU-14_Ver_Ranking_Hake.png',
+      uc15:'CU-15_Ver_Mensajes_Monitor.png',
+      uc16:'CU-16_Solicitar_Monitoria_Doble.png',
+      uc17:'CU-17_Iniciar_Sesion_Docente.png',
+      uc18:'CU-18_Publicar_Disponibilidad_Tutoria.png',
+      uc19:'CU-19_Ver_Solicitudes_Tutoria.png',
+      uc20:'CU-20_Aceptar_Rechazar_Tutoria.png',
+      uc21:'CU-21_Supervisar_Monitores.png',
+      uc22:'CU-22_Ver_Estadisticas_Monitores.png',
+      uc23:'CU-23_Gestionar_Perfil_Docente.png',
+      uc24:'CU-24_Aprobar_Monitor.png',
+      uc25:'CU-25_Rechazar_Monitor.png',
+      uc26:'CU-26_Gestionar_Usuarios.png',
+      uc27:'CU-27_Gestionar_Materias.png',
+      uc28:'CU-28_Ver_Estadisticas_Globales.png',
+      uc29:'CU-29_Panel_Admin_Django.png',
+      uc30:'CU-30_Ver_Ranking_Global.png'
+    };
+
     function switchExpTab(idx){
       document.querySelectorAll('.exp-main-tab').forEach(function(t,i){ t.classList.toggle('active',i===idx); });
       document.querySelectorAll('.exp-panel').forEach(function(p,i){ p.classList.toggle('active',i===idx); });
@@ -1974,6 +2008,10 @@ vercel --prod</div>
       if(el) el.classList.add('active');
       var uc=UC[id]; if(!uc) return;
       var steps=uc.main.map(function(s){ return '<li>'+s+'</li>'; }).join('');
+      var imgFile=UC_IMG[id];
+      var imgBlock=imgFile
+        ? '<div style="text-align:center;margin:0 0 18px;"><img src="static/img/diagramas/'+imgFile+'" alt="Diagrama '+uc.id+'" style="max-width:100%;max-height:320px;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.12);"></div>'
+        : '';
       document.getElementById('uc-detail').innerHTML=
         '<div class="uc-card">'+
           '<div class="uc-card-header">'+
@@ -1981,6 +2019,7 @@ vercel --prod</div>
             '<span class="uc-card-title">'+uc.name+'</span>'+
           '</div>'+
           '<div class="uc-body">'+
+            imgBlock+
             '<div class="uc-row"><span class="uc-label">Actor(es)</span><span class="uc-value">'+uc.actor+'</span></div>'+
             '<div class="uc-row"><span class="uc-label">Precondición</span><span class="uc-value">'+uc.pre+'</span></div>'+
             '<div class="uc-row"><span class="uc-label">Flujo Principal</span><span class="uc-value"><ol>'+steps+'</ol></span></div>'+
