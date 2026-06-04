@@ -50,29 +50,93 @@ Plataforma web para la gestión integral de monitorias académicas y tutorías d
 ## Estructura del Proyecto
 
 ```
-monitorhub/
-├── apps/
-│   ├── usuarios/        # AbstractUser, PerfilEstudiante, PerfilDocente
-│   ├── monitores/       # PerfilMonitor, Materia, DisponibilidadMonitor
-│   ├── solicitudes/     # SolicitudMonitoria, SolicitudTutoria
-│   ├── sesiones/        # Sesion, DisponibilidadDocente
-│   ├── calificaciones/  # Calificacion (Hake)
-│   ├── mensajes/        # Mensaje (buzón asíncrono)
-│   └── notificaciones/  # Notificacion
-├── monitorhub/          # settings.py, urls.py, asgi.py, wsgi.py
-├── templates/
-│   ├── base.html
-│   ├── usuarios/        # login, dashboard_*
-│   ├── monitores/       # lista, detalle
-│   ├── solicitudes/     # mis_solicitudes, nueva_tutoria
-│   ├── mensajes/        # bandeja
-│   └── calificaciones/  # calificar, mis_calificaciones
-├── static/
-│   └── img/             # Logos USB, diagramas VP
-├── pyproject.toml       # Definición del proyecto para uv/Vercel
-├── uv.lock              # Lock de dependencias (Vercel lo usa con uv sync --locked)
-├── requirements.txt
-└── .env                 # No incluir en git
+Proyecto-Monitoria-USB/
+│
+├── 📄 manage.py                          # Archivo principal de Django
+├── 📄 requirements.txt                   # Dependencias del proyecto
+├── 📄 pyproject.toml                     # Configuración del proyecto Python
+├── 📄 uv.lock                            # Lock file de uv
+├── 📄 .env.example                       # Variables de entorno (ejemplo)
+├── 📄 .gitignore                         # Archivos ignorados por Git
+├── 📄 README.md                          # Documentación del proyecto
+├── 📄 Matriz_Riesgos_MonitorHub_USB.xlsx # Matriz de riesgos
+├── 📄 documentacion_monitorhub.html      # Documentación HTML
+│
+├── 📁 monitorhub/                        # Configuración principal de Django
+│   ├── __init__.py
+│   ├── settings.py                       # Configuración del proyecto
+│   ├── urls.py                           # URLs principales
+│   ├── asgi.py
+│   └── wsgi.py
+│
+├── 📁 apps/                              # Aplicaciones de Django
+│   ├── __init__.py
+│   ├── 📁 usuarios/                      # Gestión de usuarios
+│   │   ├── models.py, views.py, urls.py, admin.py
+│   │   ├── management/commands/
+│   │   │   ├── cargar_datos_prueba.py    # Comando para datos de prueba
+│   │   │   └── configurar_grupos.py      # Comando para configurar grupos
+│   │   └── migrations/
+│   │
+│   ├── 📁 monitores/                     # Gestión de monitores
+│   │   ├── models.py, views.py, urls.py, admin.py
+│   │   └── migrations/
+│   │
+│   ├── 📁 calificaciones/                # Sistema de calificaciones
+│   │   ├── models.py, views.py, urls.py, admin.py
+│   │   └── migrations/
+│   │
+│   ├── 📁 mensajes/                      # Sistema de mensajería
+│   │   ├── models.py, views.py, urls.py, admin.py
+│   │   └── migrations/
+│   │
+│   ├── 📁 notificaciones/                # Sistema de notificaciones
+│   │   ├── models.py, urls.py, admin.py
+│   │   └── migrations/
+│   │
+│   ├── 📁 sesiones/                      # Gestión de sesiones
+│   │   ├── models.py, views.py, urls.py, admin.py
+│   │   └── migrations/
+│   │
+│   └── 📁 solicitudes/                   # Gestión de solicitudes
+│       ├── models.py, views.py, urls.py, admin.py
+│       └── migrations/
+│
+├── 📁 templates/                         # Plantillas HTML
+│   ├── base.html                         # Template base
+│   ├── 📁 usuarios/
+│   │   ├── login.html
+│   │   ├── dashboard_admin.html
+│   │   ├── dashboard_docente.html
+│   │   ├── dashboard_estudiante.html
+│   │   └── dashboard_monitor.html
+│   ├── 📁 monitores/
+│   │   ├── lista.html
+│   │   └── detalle.html
+│   ├── 📁 calificaciones/
+│   │   ├── calificar.html
+│   │   └── mis_calificaciones.html
+│   ├── 📁 mensajes/
+│   │   └── bandeja.html
+│   └── 📁 solicitudes/
+│       ├── mis_solicitudes.html
+│       └── nueva_tutoria.html
+│
+├── 📁 static/img/                        # Recursos estáticos
+│   ├── logo_usb_emblema.png
+│   ├── logo_usb_login.png
+│   ├── 📁 Diagramas/
+│   │   ├── Diagrama casos de uso/
+│   │   ├── Diagrama de actividades/
+│   │   ├── Diagrama de clases/
+│   │   └── Diagramas de secuencia/       # 14 diagramas
+│   ├── 📁 Documentacion casos de uso/
+│   │   └── Documentacion_Casos_de_Uso_MonitorHub.docx
+│   └── 📁 WIREFRAMES_MONITORHUB/
+│       └── wireframes_monitorhub_usb.pdf
+│
+└── 📁 docs/
+    └── guia_despliegue.md                # Guía de despliegue
 ```
 
 ---
