@@ -1,17 +1,19 @@
 import os
 from pathlib import Path
+from urllib.parse import urlparse
 import environ
 
 # Initialize environment variables
 env = environ.Env(
-    DEBUG=(bool, False)
+    DEBUG=(bool, False),
+    ALLOWED_HOSTS=(list, ['localhost', '127.0.0.1']),
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Read .env file
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+# Read .env file (solo en desarrollo local; en Vercel las vars se configuran en el dashboard)
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'), overwrite=False)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -22,7 +24,15 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = []
+# Hosts permitidos: en Vercel se configura via variable de entorno ALLOWED_HOSTS
+# Ejemplo: ALLOWED_HOSTS=proyecto-monitoria-usb.vercel.app,.vercel.app
+ALLOWED_HOSTS = env('ALLOWED_HOSTS')
+
+# Orígenes de confianza para CSRF (requerido para formularios en HTTPS)
+CSRF_TRUSTED_ORIGINS = env.list(
+    'CSRF_TRUSTED_ORIGINS',
+    default=['https://*.vercel.app', 'http://localhost:8001', 'http://127.0.0.1:8001']
+)
 
 
 # Application definition
@@ -83,15 +93,30 @@ ASGI_APPLICATION = 'monitorhub.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+# Si existe DATABASE_URL (Vercel/Neon) usa PostgreSQL; si no, cae a SQLite local
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+_db_url = os.environ.get('DATABASE_URL', '').lstrip('﻿').strip()
+if _db_url:
+    _p = urlparse(_db_url)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': _p.path.lstrip('/').split('?')[0],
+            'USER': _p.username or '',
+            'PASSWORD': _p.password or '',
+            'HOST': _p.hostname or '',
+            'PORT': str(_p.port or 5432),
+            'OPTIONS': {'sslmode': 'require'},
+            'CONN_MAX_AGE': 600,
+        }
     }
-    # MySQL (producción) — descomentar cuando esté listo el servidor universitario
-    # 'default': env.db('DATABASE_URL')
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
